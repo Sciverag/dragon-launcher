@@ -1,0 +1,43 @@
+.launcher-shell {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.start-text {
+  position: absolute;
+  margin-top: 2rem;
+  font-size: 1.5rem;
+  color: #fff;
+  opacity: 0.5;
+  bottom: 30vh;
+  font-weight: bold;
+  animation: start-animation 1s ease-out;
+}
+
+.launcher-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+
+.play-button {
+  width: 150px;
+  height: 150px;
+  animation: start-animation 0.5s ease-out;
+  z-index: 1;
+}
+
+.play-button-riples {
+  position: absolute;
+  filter: opacity(20%);
+  width: 150px;
+  height: 150px;
+  border-radius: 100px;
+  background-color: #ff440000;
+  box-shadow: 0 0 0 2px #ffffff, 0 0 0 4px #ff440000;
+  animation: start-animation 0.5s ease-out, ripple-animation 1.5s infinite;
+}

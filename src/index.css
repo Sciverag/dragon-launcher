@@ -1,0 +1,256 @@
+@import "tailwindcss";
+
+body {
+    background-color: #1e1e1e;
+    max-height: 100vh;
+    overflow: hidden;
+}
+
+
+
+.ripple-circles {
+    position: absolute;
+    display: none;
+    bottom: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+}
+
+.visible {
+    display: block;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.ripple {
+    position: absolute;
+    border-radius: 100000px;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    animation: transition-animation 0.5s ease-out forwards;
+    transform-origin: top left;
+    z-index: 1;
+}
+
+.ripple.reverse-animation {
+    opacity: 1;
+    animation: transition-animation 0.5s ease-out reverse forwards;
+}
+
+.reverse-animation {
+    animation-direction: reverse !important;
+    animation-fill-mode: forwards !important;
+}
+
+.ripple:nth-child(4) {
+    width: 120vw;
+    height: 120vw;
+    background: rgb(69, 69, 69);
+    z-index: 0;
+    animation-delay: 0.3s;
+}
+
+.ripple:nth-child(4):has(.reverse-animation) {
+    animation-delay: 0s !important;
+}
+
+.ripple:nth-child(3) {
+    width: 100vw;
+    height: 100vw;
+    background: rgb(108, 108, 108);
+    z-index: 1;
+    animation-delay: 0.2s;
+}
+
+.ripple:nth-child(3):has(.reverse-animation) {
+    animation-delay: 0.1s !important;
+}
+
+.ripple:nth-child(2) {
+    width: 50vw;
+    height: 50vw;
+    background: rgb(162, 162, 162);
+    z-index: 2;
+    animation-delay: 0.1s;
+}
+
+.ripple:nth-child(2):has(.reverse-animation) {
+    animation-delay: 0.2s !important;
+}
+
+.ripple:first-child {
+    width: 20vw;
+    height: 20vw;
+    background: rgb(221, 221, 221);
+    z-index: 3;
+}
+
+.ripple:first-child:has(.reverse-animation) {
+    animation-delay: 0.3s !important;
+}
+
+.button {
+    display: flex;
+    position: relative;
+    overflow: hidden;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    font-size: 3rem;
+    color: #fff;
+    background-color: #0000003c;
+    box-shadow: 0 0 0 2px #ffffff, 0 0 0 4px #ff440000;
+    border: none;
+    border-radius: 100px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.button:hover {
+    box-shadow: 0 0 0 2px #ffffff, 0 1px 10px 8px #ffffff11;
+    scale: 1.05;
+}
+
+.button:hover::after {
+    visibility: visible;
+}
+
+.button::after {
+    content: '';
+    position: absolute;
+    visibility: hidden;
+    transition: all 0.2s ease-in-out;
+    width: 300px;
+    height: 200px;
+    background-image: linear-gradient(180deg, #ffffff00 0% 30%, #ffffff95 50%, #ffffff00 80% 100%);
+    animation: shine-animation 2s infinite;
+    filter: opacity(15%) blur(2px);
+    pointer-events: none;
+}
+
+.ocean {
+    height: 5%;
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    background: #015871;
+    filter: grayscale(100%) opacity(50%);
+    animation: up-animation 1s ease-in-out;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.wave {
+    background: url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/85486/wave.svg) repeat-x;
+    position: absolute;
+    top: -198px;
+    width: 6400px;
+    height: 198px;
+    filter: grayscale(100%);
+    animation: wave 7s cubic-bezier(0.36, 0.45, 0.63, 0.53) infinite;
+    transform: translate3d(0, 0, 0);
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.wave:nth-of-type(2) {
+    top: -175px;
+    animation: wave 7s cubic-bezier(0.36, 0.45, 0.63, 0.53) -.125s infinite, swell 7s ease -1.25s infinite;
+    opacity: 1;
+}
+
+@keyframes wave {
+    0% {
+        margin-left: 0;
+    }
+
+    100% {
+        margin-left: -1600px;
+    }
+}
+
+@keyframes swell {
+
+    0%,
+    100% {
+        transform: translate3d(0, -20px, 0);
+    }
+
+    50% {
+        transform: translate3d(0, px, 0);
+    }
+}
+
+
+@keyframes ripple-animation {
+    0% {
+        transform: scale(1);
+        opacity: 0.7;
+    }
+
+    100% {
+        transform: scale(2);
+        opacity: 0;
+    }
+}
+
+@keyframes shine-animation {
+    0% {
+        transform: translateY(100%) rotate(25deg);
+    }
+
+    100% {
+        transform: translateY(-100%) rotate(25deg);
+    }
+}
+
+@keyframes start-animation {
+    0% {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes up-animation {
+    0% {
+        transform: translateY(200%);
+        opacity: 0;
+    }
+
+}
+
+@keyframes up-animation-ex {
+    0% {
+        transform: translateY(1000%);
+        opacity: 0;
+    }
+}
+
+@keyframes down-animation {
+    0% {
+        transform: translateY(-200%);
+        opacity: 0;
+    }
+}
+
+@keyframes transition-animation {
+    0% {
+        scale: 0;
+        opacity: 0;
+    }
+
+    100% {
+        scale: 1;
+        opacity: 1;
+    }
+}

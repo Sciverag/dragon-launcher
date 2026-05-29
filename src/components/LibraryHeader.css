@@ -1,0 +1,13 @@
+.library-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 1.5rem;
+    width: 40vw;
+    margin: 0 auto;
+    background: rgba(0, 0, 0, 0.127);
+    border-radius: 40px;
+    margin-top: 1rem;
+    box-shadow: 0 0 0 2px #ffffff6d, 0 0 0 4px #ff440000;
+    animation: down-animation 0.9s ease-out;
+}
