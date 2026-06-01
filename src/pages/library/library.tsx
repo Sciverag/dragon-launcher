@@ -1,10 +1,15 @@
 import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { LibraryHeader } from "../../components/LibraryHeader";
 import "./library.css";
 
 function Library() {
+  const location = useLocation();
   const [orientation, setOrientation] = useState<"grid" | "list">("grid");
   const [searchQuery, setSearchQuery] = useState("");
+  const [showRipples, setShowRipples] = useState(
+    (location.state as { fromHome?: boolean })?.fromHome ?? false,
+  );
 
   const handleOrientationChange = (newOrientation: "grid" | "list") => {
     setOrientation(newOrientation);
@@ -16,18 +21,13 @@ function Library() {
     console.log("Buscando:", query);
   };
 
-  const hideRipples = () => {
-    const rippleCircles = document.querySelector(".ripple-circles");
-    if (rippleCircles) {
+  useEffect(() => {
+    if (showRipples) {
       setTimeout(() => {
-        rippleCircles.classList.remove("visible");
+        setShowRipples(false);
       }, 1000);
     }
-  };
-
-  useEffect(() => {
-    hideRipples();
-  });
+  }, [showRipples]);
 
   return (
     <div className="library-container">
@@ -43,7 +43,7 @@ function Library() {
               Buscando: <strong>{searchQuery}</strong>
             </div>
           )}
-          <div className="ripple-circles visible">
+          <div className={`ripple-circles ${showRipples ? "visible" : ""}`}>
             <div className="ripple reverse-animation"></div>
             <div className="ripple reverse-animation"></div>
             <div className="ripple reverse-animation"></div>

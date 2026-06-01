@@ -101,9 +101,8 @@ body {
     align-items: center;
     justify-content: center;
     padding: 1rem;
-    font-size: 3rem;
     color: #fff;
-    background-color: #0000003c;
+    background-color: #0000006f;
     box-shadow: 0 0 0 2px #ffffff, 0 0 0 4px #ff440000;
     border: none;
     border-radius: 100px;
@@ -125,7 +124,7 @@ body {
     position: absolute;
     visibility: hidden;
     transition: all 0.2s ease-in-out;
-    width: 300px;
+    width: 500px;
     height: 200px;
     background-image: linear-gradient(180deg, #ffffff00 0% 30%, #ffffff95 50%, #ffffff00 80% 100%);
     animation: shine-animation 2s infinite;
@@ -140,7 +139,7 @@ body {
     bottom: 0;
     left: 0;
     background: #015871;
-    filter: grayscale(100%) opacity(50%);
+    filter: grayscale(100%) opacity(30%);
     animation: up-animation 1s ease-in-out;
     border: none !important;
     box-shadow: none !important;
@@ -240,6 +239,31 @@ body {
     0% {
         transform: translateY(-200%);
         opacity: 0;
+    }
+}
+
+@keyframes left-animation {
+    0% {
+        transform: translateX(200%);
+        opacity: 0;
+    }
+}
+
+@keyframes right-animation {
+    0% {
+        transform: translateX(-200%);
+        opacity: 0;
+    }
+}
+
+@keyframes fade-in-animation {
+    0% {
+        scale: 0.95;
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
     }
 }
 

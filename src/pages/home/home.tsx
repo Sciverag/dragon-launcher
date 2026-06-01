@@ -13,7 +13,7 @@ function Home() {
       }, 1000);
     }
     setTimeout(() => {
-      navigate("/library");
+      navigate("/library", { state: { fromHome: true } });
     }, 1000);
   }
 

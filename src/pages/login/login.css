@@ -1,154 +1,102 @@
 .login-container {
-  min-height: 100vh;
+  width: 100vw;
+  height: 100vh;
   display: flex;
-  align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
-    Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
+  align-items: center;
 }
 
 .login-card {
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-  padding: 40px;
-  width: 100%;
-  max-width: 400px;
-  animation: slideUp 0.5s ease-out;
+  width: 500px;
+  padding: 2rem;
+  background: rgba(0, 0, 0, 0.127);
+  border-radius: 40px;
+  box-shadow: 0 0 0 2px #ffffff6d, 0 0 0 4px #ff440000;
+  position: absolute;
+  animation: fade-in-animation 0.5s ease-in-out;
 }
 
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.login-register-button {
+  position: absolute;
+  display: flex;
+  gap: 0.5rem;
+  top: 4rem;
+  right: 4rem;
+  font-size: 1.2rem;
+  animation: left-animation 0.5s ease-out;
+}
+
+.return-button {
+  position: absolute;
+  display: flex;
+  gap: 0.5rem;
+  bottom: 4rem;
+  left: 4rem;
+  font-size: 1.2rem;
+  animation: right-animation 0.5s ease-out;
 }
 
 .login-title {
-  font-size: 28px;
-  font-weight: 700;
-  color: #333;
-  margin: 0 0 8px;
+  font-size: 3rem;
+  width: 100%;
+  font-weight: bold;
+  color: #fff;
   text-align: center;
-}
-
-.login-subtitle {
-  font-size: 14px;
-  color: #666;
-  text-align: center;
-  margin: 0 0 30px;
+  margin-bottom: 1.5rem;
+  position: absolute;
+  top: -5rem;
+  left: 50%;
+  letter-spacing: 0.1rem;
+  text-transform: uppercase;
+  transform: translateX(-50%);
 }
 
 .login-form {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  width: 100%;
+  gap: 1.5rem;
+}
+
+.form-group label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  color: #fff;
+  font-size: 1rem;
+  height: 100%;
+  border-radius: 40px 0 0 40px;
+  margin: 0;
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .form-group {
   display: flex;
-  flex-direction: column;
-}
-
-.form-group label {
-  font-size: 14px;
-  font-weight: 500;
-  color: #333;
-  margin-bottom: 8px;
+  align-items: center;
+  height: 3rem;
+  width: 100%;
 }
 
 .form-group input {
-  padding: 12px 16px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  font-size: 14px;
-  transition: all 0.2s ease;
-  font-family: inherit;
-}
-
-.form-group input:focus {
-  outline: none;
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-  background-color: #f8f9ff;
-}
-
-.form-group input:disabled {
-  background-color: #f5f5f5;
-  cursor: not-allowed;
-  opacity: 0.7;
-}
-
-.error-message {
-  padding: 12px;
-  background-color: #fee;
-  border: 1px solid #fcc;
-  border-radius: 6px;
-  color: #c33;
-  font-size: 13px;
-  animation: shake 0.3s ease-in-out;
-}
-
-@keyframes shake {
-  0%, 100% {
-    transform: translateX(0);
-  }
-  25% {
-    transform: translateX(-5px);
-  }
-  75% {
-    transform: translateX(5px);
-  }
-}
-
-.login-button {
-  padding: 12px 24px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  width: 100%;
+  height: 100%;
   border: none;
-  border-radius: 6px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  margin-top: 10px;
+  border-radius: 0 40px 40px 0;
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
 }
 
-.login-button:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+.login-ocean-top {
+  top: -28%;
+  transform: translateX(-50%);
+  rotate: 195deg;
+  z-index: -1;
 }
 
-.login-button:active:not(:disabled) {
-  transform: translateY(0);
-}
-
-.login-button:disabled {
-  opacity: 0.8;
-  cursor: not-allowed;
-}
-
-.login-footer {
-  text-align: center;
-  font-size: 13px;
-  color: #666;
-  margin-top: 20px;
-}
-
-.link {
-  color: #667eea;
-  font-weight: 600;
-  cursor: pointer;
-  transition: color 0.2s;
-}
-
-.link:hover {
-  color: #764ba2;
+.login-ocean-bottom {
+  bottom: -17%;
+  left: -15%;
+  z-index: -1;
+  rotate: 15deg;
 }
