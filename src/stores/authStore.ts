@@ -4,6 +4,7 @@ interface AuthState {
   isLoggedIn: boolean;
   user: { username: string } | null;
   login: (username: string) => Promise<void>;
+  register: (username: string) => Promise<void>;
   logout: () => void;
   checkAuth: () => void;
 }
@@ -18,7 +19,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     try {
       // Simular API call
       await new Promise((resolve) => setTimeout(resolve, 500));
-      
+
       // Guardar en localStorage
       localStorage.setItem('user', JSON.stringify({ username }));
       localStorage.setItem('isLoggedIn', 'true');
@@ -29,6 +30,25 @@ export const useAuthStore = create<AuthState>((set) => ({
       });
     } catch (error) {
       console.error('Error en login:', error);
+      throw error;
+    }
+  },
+
+  register: async (username: string) => {
+    // Aquí puedes agregar la lógica de registro real
+    // Por ahora simularemos un registro exitoso
+    try {
+      // Simular API call
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      // Guardar en localStorage
+      localStorage.setItem('user', JSON.stringify({ username }));
+      localStorage.setItem('isLoggedIn', 'true');
+      set({
+        isLoggedIn: true,
+        user: { username },
+      });
+    } catch (error) {
+      console.error('Error en registro:', error);
       throw error;
     }
   },

@@ -94,6 +94,10 @@ body {
     animation-delay: 0.3s !important;
 }
 
+.glass {
+    position: relative;
+}
+
 .button {
     display: flex;
     position: relative;
@@ -108,6 +112,7 @@ body {
     border-radius: 100px;
     cursor: pointer;
     transition: all 0.2s ease-in-out;
+    font-weight: 500;
 }
 
 .button:hover {
@@ -115,11 +120,13 @@ body {
     scale: 1.05;
 }
 
-.button:hover::after {
+.button:hover::after,
+.glass:hover::after {
     visibility: visible;
 }
 
-.button::after {
+.button::after,
+.glass::after {
     content: '';
     position: absolute;
     visibility: hidden;

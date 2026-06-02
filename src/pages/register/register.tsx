@@ -1,15 +1,32 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../stores/authStore";
 import { authService } from "../../services/authService";
-import "./login.css";
+import "./register.css";
 
-export default function Login() {
+export default function Register() {
   const navigate = useNavigate();
+  const [avatar, setAvatar] = useState("");
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const input = e.target as HTMLInputElement;
+    const files = input.files;
+    if (!files || files.length === 0) return;
+    const file = files[0];
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result as string;
+      setAvatar(result);
+      input.value = "";
+    };
+    reader.readAsDataURL(file);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -17,10 +34,12 @@ export default function Login() {
     setLoading(true);
 
     try {
-      await authService.login({ email, password });
-      navigate("/");
+      await authService.register({ avatar, username, email, password });
+      navigate("/library");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Error durante el login");
+      setError(
+        err instanceof Error ? err.message : "Error durante el registro",
+      );
     } finally {
       setLoading(false);
     }
@@ -81,16 +100,63 @@ export default function Login() {
       </div>
       <button
         className="button login-register-button"
-        onClick={() => handleNavigation("/register")}
+        onClick={() => handleNavigation("/login")}
       >
-        <span className="material-symbols-outlined">person_add</span>{" "}
-        Registrarse
+        <span className="material-symbols-outlined">person</span> Iniciar sesión
       </button>
       <div className="login-card">
-        <h1 className="login-title">Iniciar Sesión</h1>
+        <h1 className="login-title">Registrarse</h1>
 
         <form onSubmit={handleSubmit} className="login-form">
           {error && <div className="error-message">{error}</div>}
+
+          <div
+            className="form-group-image glass"
+            onClick={() => !loading && fileInputRef.current?.click()}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ")
+                fileInputRef.current?.click();
+            }}
+          >
+            {avatar ? (
+              <img src={avatar} alt="Avatar" className="avatar-preview" />
+            ) : (
+              <div className="avatar_label" aria-hidden>
+                <span className="material-symbols-outlined">person</span>
+              </div>
+            )}
+            <div className="edit_label" aria-hidden>
+              <span className="material-symbols-outlined">edit</span>
+            </div>
+            <input
+              id="avatar"
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleAvatarChange}
+              disabled={loading}
+              style={{ display: "none" }}
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="username">
+              {" "}
+              <span className="material-symbols-outlined">person</span>
+            </label>
+            <input
+              id="username"
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder="Nombre de usuario"
+              disabled={loading}
+              required
+              autoFocus
+            />
+          </div>
 
           <div className="form-group">
             <label htmlFor="email">
@@ -126,7 +192,7 @@ export default function Login() {
           </div>
 
           <button type="submit" className="button" disabled={loading}>
-            {loading ? "Iniciando sesión..." : "Iniciar Sesión"}
+            {loading ? "Registrando..." : "Registrarse"}
           </button>
         </form>
       </div>

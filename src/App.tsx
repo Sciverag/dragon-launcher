@@ -5,6 +5,7 @@ import { ProtectedRoute } from "./components/ProtectedRoute";
 import Library from "./pages/library/library";
 import Home from "./pages/home/home";
 import Login from "./pages/login/login";
+import Register from "./pages/register/register";
 
 function App() {
   const checkAuth = useAuthStore((state) => state.checkAuth);
@@ -20,6 +21,7 @@ function App() {
       <Route path="/" element={<Home />} />
       <Route path="/library" element={<Library />} />
       <Route path="*" element={<Navigate to="/login" replace />} />
+      <Route path="/register" element={<Register />} />
     </Routes>
   );
 }

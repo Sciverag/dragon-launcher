@@ -1,0 +1,70 @@
+.form-group-image {
+    display: flex;
+    flex-direction: column;
+    margin: 0 auto;
+    align-items: center;
+    width: fit-content;
+    box-shadow: 0px 0px 0px 3px rgba(255, 255, 255, 0.392);
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 100px;
+    overflow: hidden;
+    max-width: 200px;
+    min-width: 200px;
+    min-height: 200px;
+    max-height: 200px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.avatar-preview {
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+}
+
+.form-group-image input {
+    display: none;
+}
+
+.form-group-image:hover {
+    box-shadow: 0px 0px 0px 3px rgba(255, 255, 255, 1);
+    cursor: pointer;
+    scale: 1.01;
+}
+
+.form-group-image:hover .edit_label {
+    opacity: 0.8;
+}
+
+.avatar_label {
+    color: #515151;
+    position: relative;
+    bottom: -40px;
+    cursor: pointer;
+}
+
+.avatar_label>span {
+    font-size: 10rem;
+    scale: 1.5;
+    margin-bottom: 10px;
+}
+
+.edit_label {
+    color: #ffffff;
+    background-color: #000000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 200px;
+    height: 200px;
+    bottom: 0;
+    position: absolute;
+    cursor: pointer;
+    opacity: 0;
+    transition: all 0.2s ease-in-out;
+}
+
+.edit_label>span {
+    font-size: 2.2rem;
+    scale: 1.5;
+}
