@@ -28,6 +28,39 @@ export default function Register() {
     reader.readAsDataURL(file);
   };
 
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    if (loading) return;
+  };
+
+  const handleDragEnter = (e: React.DragEvent) => {
+    e.preventDefault();
+    if (loading) return;
+    (e.currentTarget as HTMLElement).classList.add("drag-over");
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    if (loading) return;
+    (e.currentTarget as HTMLElement).classList.remove("drag-over");
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    if (loading) return;
+    (e.currentTarget as HTMLElement).classList.remove("drag-over");
+    const files = e.dataTransfer.files;
+    if (!files || files.length === 0) return;
+    const file = files[0];
+    if (!file.type.startsWith("image/")) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result as string;
+      setAvatar(result);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    };
+    reader.readAsDataURL(file);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
@@ -119,6 +152,10 @@ export default function Register() {
               if (e.key === "Enter" || e.key === " ")
                 fileInputRef.current?.click();
             }}
+            onDragOver={handleDragOver}
+            onDragEnter={handleDragEnter}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
           >
             {avatar ? (
               <img src={avatar} alt="Avatar" className="avatar-preview" />
