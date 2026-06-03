@@ -121,21 +121,24 @@ body {
 }
 
 .button:hover::after,
-.glass:hover::after {
-    visibility: visible;
+.glass:hover::after,
+.glass.selected::after {
+    display: block;
 }
 
 .button::after,
 .glass::after {
     content: '';
     position: absolute;
-    visibility: hidden;
+    display: none;
     transition: all 0.2s ease-in-out;
     width: 500px;
     height: 200px;
-    background-image: linear-gradient(180deg, #ffffff00 0% 30%, #ffffff95 50%, #ffffff00 80% 100%);
+    background-image: linear-gradient(180deg, #ffffff00 0% 30%, #ffffffa4 50%, #ffffff00 80% 100%);
     animation: shine-animation 2s infinite;
-    filter: opacity(15%) blur(2px);
+    transform: translateY(150%) rotate(25deg);
+    animation-delay: 0.5s;
+    filter: opacity(30%) blur(2px);
     pointer-events: none;
 }
 
@@ -146,7 +149,7 @@ body {
     bottom: 0;
     left: 0;
     background: #015871;
-    filter: grayscale(100%) opacity(30%);
+    filter: grayscale(100%) brightness(100%) opacity(0.8);
     animation: up-animation 1s ease-in-out;
     border: none !important;
     box-shadow: none !important;
@@ -189,7 +192,7 @@ body {
     }
 
     50% {
-        transform: translate3d(0, px, 0);
+        transform: translate3d(0, 0px, 0);
     }
 }
 
@@ -208,11 +211,11 @@ body {
 
 @keyframes shine-animation {
     0% {
-        transform: translateY(100%) rotate(25deg);
+        transform: translateY(150%) rotate(25deg);
     }
 
     100% {
-        transform: translateY(-100%) rotate(25deg);
+        transform: translateY(-150%) rotate(25deg);
     }
 }
 
@@ -283,5 +286,15 @@ body {
     100% {
         scale: 1;
         opacity: 1;
+    }
+}
+
+@keyframes visibility-animation {
+    0% {
+        opacity: 0%;
+    }
+
+    100% {
+        opacity: 100%;
     }
 }

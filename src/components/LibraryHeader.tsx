@@ -12,7 +12,7 @@ interface LibraryHeaderProps {
 export const LibraryHeader = ({
   onOrientationChange,
   onSearch,
-  currentOrientation = "grid",
+  currentOrientation = "list",
 }: LibraryHeaderProps) => {
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
   const navigate = useNavigate();
@@ -30,7 +30,7 @@ export const LibraryHeader = ({
     onOrientationChange?.(newOrientation);
   };
 
-  const handleLoginClick = () => {
+  const handleRouteChange = (route: string) => {
     const ocean = document.querySelector(".library-ocean");
     if (ocean) {
       ocean.classList.add("hidden");
@@ -49,11 +49,34 @@ export const LibraryHeader = ({
         libraryHeader.classList.add("reverse-animation");
       }, 1);
     }
-    if (!isLoggedIn) {
+    const libraryGames = document.querySelector(".library-games");
+    if (libraryGames) {
+      libraryGames.classList.add("hidden");
       setTimeout(() => {
-        navigate("/login");
-      }, 1000);
+        libraryGames.classList.remove("hidden");
+        libraryGames.classList.add("visible");
+        libraryGames.classList.add("reverse-animation");
+      }, 1);
     }
+    const game_background = document.querySelector(".game-background");
+    if (game_background) {
+      game_background.classList.add("reverse-animation");
+      game_background.classList.add("hidden");
+      setTimeout(() => {
+        game_background.classList.remove("hidden");
+      }, 0);
+    }
+    const game_logo = document.querySelector(".game-logo");
+    const game_name = document.querySelector(".game-name");
+    if (game_logo) {
+      game_logo.classList.add("reverse-animation");
+    }
+    if (game_name) {
+      game_name.classList.add("reverse-animation");
+    }
+    setTimeout(() => {
+      navigate(route);
+    }, 1000);
   };
 
   return (
@@ -62,7 +85,11 @@ export const LibraryHeader = ({
         className="button"
         title={isLoggedIn ? "Perfil de usuario" : "Iniciar sesión"}
         aria-label="Menú de usuario"
-        onClick={handleLoginClick}
+        onClick={() =>
+          !isLoggedIn
+            ? handleRouteChange("/login")
+            : handleRouteChange("/profile")
+        }
       >
         {isLoggedIn ? (
           <img src="" alt="" />
@@ -85,7 +112,7 @@ export const LibraryHeader = ({
         title={`Cambiar orientación`}
         aria-label="Cambiar orientación"
       >
-        {currentOrientation === "grid" ? (
+        {currentOrientation === "list" ? (
           <span className="material-symbols-outlined">menu</span>
         ) : (
           <span className="material-symbols-outlined">grid_view</span>
@@ -96,6 +123,7 @@ export const LibraryHeader = ({
         className="button"
         title="Ajustes"
         aria-label="Ajustes de la aplicación"
+        onClick={() => handleRouteChange("/settings")}
       >
         <span className="material-symbols-outlined">settings</span>
       </button>
