@@ -6,6 +6,24 @@ body {
     overflow: hidden;
 }
 
+::-webkit-scrollbar {
+    width: 15px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #00000085;
+    border-radius: 10px;
+    transition: all 0.2s ease-in-out;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #262626aa;
+}
+
 
 
 .ripple-circles {
@@ -15,6 +33,7 @@ body {
     left: 0;
     width: 100vw;
     height: 100vh;
+    z-index: 4;
 }
 
 .visible {
@@ -45,6 +64,7 @@ body {
 .reverse-animation {
     animation-direction: reverse !important;
     animation-fill-mode: forwards !important;
+    pointer-events: none;
 }
 
 .ripple:nth-child(4) {

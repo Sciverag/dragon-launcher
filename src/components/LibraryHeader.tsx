@@ -49,6 +49,12 @@ export const LibraryHeader = ({
         libraryHeader.classList.add("reverse-animation");
       }, 1);
     }
+    const scroll_buttons = document.querySelectorAll(".scroll-button");
+    if (scroll_buttons) {
+      scroll_buttons.forEach((scroll_button) => {
+        scroll_button.classList.add("reverse-animation");
+      });
+    }
     const libraryGames = document.querySelector(".library-games");
     if (libraryGames) {
       libraryGames.classList.add("hidden");
@@ -57,6 +63,10 @@ export const LibraryHeader = ({
         libraryGames.classList.add("visible");
         libraryGames.classList.add("reverse-animation");
       }, 1);
+    }
+    const game_button = document.querySelector(".game-button");
+    if (game_button) {
+      game_button.classList.add("reverse-animation");
     }
     const game_background = document.querySelector(".game-background");
     if (game_background) {
@@ -112,7 +122,7 @@ export const LibraryHeader = ({
         title={`Cambiar orientación`}
         aria-label="Cambiar orientación"
       >
-        {currentOrientation === "list" ? (
+        {currentOrientation === "grid" ? (
           <span className="material-symbols-outlined">menu</span>
         ) : (
           <span className="material-symbols-outlined">grid_view</span>
