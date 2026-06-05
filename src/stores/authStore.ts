@@ -14,13 +14,12 @@ export const useAuthStore = create<AuthState>((set) => ({
   user: null,
 
   login: async (username: string) => {
-    // Aquí puedes agregar la lógica de autenticación real
-    // Por ahora simularemos un login exitoso
+
     try {
-      // Simular API call
+
       await new Promise((resolve) => setTimeout(resolve, 500));
 
-      // Guardar en localStorage
+
       localStorage.setItem('user', JSON.stringify({ username }));
       localStorage.setItem('isLoggedIn', 'true');
 
@@ -35,12 +34,11 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
 
   register: async (username: string) => {
-    // Aquí puedes agregar la lógica de registro real
-    // Por ahora simularemos un registro exitoso
+
     try {
-      // Simular API call
+
       await new Promise((resolve) => setTimeout(resolve, 500));
-      // Guardar en localStorage
+
       localStorage.setItem('user', JSON.stringify({ username }));
       localStorage.setItem('isLoggedIn', 'true');
       set({
@@ -54,7 +52,7 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
 
   logout: () => {
-    // Limpiar localStorage
+
     localStorage.removeItem('user');
     localStorage.removeItem('isLoggedIn');
 
@@ -65,7 +63,7 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
 
   checkAuth: () => {
-    // Verificar si el usuario está autenticado al cargar la app
+
     const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
     const userStr = localStorage.getItem('user');
 

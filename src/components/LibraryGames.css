@@ -135,9 +135,10 @@
 }
 
 .game-name {
+    cursor: default;
     color: white;
     font-weight: bold;
-    font-size: 2rem;
+    font-size: 2.5rem;
     text-align: center;
     width: 400px;
     padding: 0.5rem;

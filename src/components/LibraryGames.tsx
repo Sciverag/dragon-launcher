@@ -73,8 +73,24 @@ export default function LibraryGames({
         }, 1);
       });
     }
+    const library_ocean = document.querySelector(".library-ocean");
+    if (library_ocean) {
+      library_ocean.classList.add("reverse-animation");
+      library_ocean.classList.add("hidden");
+      setTimeout(() => {
+        library_ocean.classList.remove("hidden");
+      }, 1);
+    }
+    const game_button = document.querySelector(".game-button");
+    if (game_button) {
+      game_button.classList.add("reverse-animation");
+      game_button.classList.add("hidden");
+      setTimeout(() => {
+        game_button.classList.remove("hidden");
+      }, 1);
+    }
     setTimeout(() => {
-      navigate("/game");
+      navigate(`/game/${filteredGames[activeIndex].id}`);
     }, 1000);
   };
 

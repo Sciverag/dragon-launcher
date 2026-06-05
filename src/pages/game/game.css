@@ -1,0 +1,130 @@
+.game-details-container {
+    display: flex;
+    flex-direction: column;
+    width: 100vw;
+    height: 100vh;
+    background-image: linear-gradient(to right, black, transparent);
+    animation: gradient-spawn 0.4s ease-in-out;
+}
+
+.background-game-detail {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-size: 100% 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    filter: brightness(75%);
+    z-index: -1;
+}
+
+.name-game-detail {
+    cursor: default;
+    color: white;
+    font-weight: bold;
+    font-size: 2.5rem;
+    text-align: center;
+    width: 400px;
+    padding: 0.5rem;
+    margin-top: 5rem;
+    margin-left: 2rem;
+    transform: scale(1.2) translateX(2rem);
+    filter: drop-shadow(1px 1px 1px #00000050) drop-shadow(-1px -1px 1px #00000050) drop-shadow(1px -1px 1px #00000050) drop-shadow(-1px 1px 1px #00000050);
+    animation: name-logo-spawn 0.7s ease-in-out;
+}
+
+@keyframes name-logo-spawn {
+    0% {
+        transform: scale(1) translateY(calc(40vh - 8.5rem));
+    }
+}
+
+@keyframes gradient-spawn {
+    0% {
+        background-image: linear-gradient(to right, rgba(0, 0, 0, 0), transparent 0%);
+    }
+
+    5% {
+        background-image: linear-gradient(to right, rgba(0, 0, 0, 0.1), transparent 5%);
+    }
+
+    10% {
+        background-image: linear-gradient(to right, rgba(0, 0, 0, 0.2), transparent 10%);
+    }
+
+    15% {
+        background-image: linear-gradient(to right, rgba(0, 0, 0, 0.3), transparent 15%);
+    }
+
+    20% {
+        background-image: linear-gradient(to right, rgba(0, 0, 0, 0.4), transparent 20%);
+    }
+
+    25% {
+        background-image: linear-gradient(to right, rgba(0, 0, 0, 0.5), transparent 25%);
+    }
+
+    30% {
+        background-image: linear-gradient(to right, rgba(0, 0, 0, 0.6), transparent 30%);
+    }
+
+    35% {
+        background-image: linear-gradient(to right, rgba(0, 0, 0, 0.7), transparent 35%);
+    }
+
+    40% {
+        background-image: linear-gradient(to right, rgba(0, 0, 0, 0.8), transparent 40%);
+    }
+
+    45% {
+        background-image: linear-gradient(to right, rgba(0, 0, 0, 0.9), transparent 45%);
+    }
+
+    50% {
+        background-image: linear-gradient(to right, black, transparent 50%);
+    }
+
+    55% {
+        background-image: linear-gradient(to right, black, transparent 55%);
+    }
+
+    60% {
+        background-image: linear-gradient(to right, black, transparent 60%);
+    }
+
+    65% {
+        background-image: linear-gradient(to right, black, transparent 65%);
+    }
+
+    70% {
+        background-image: linear-gradient(to right, black, transparent 70%);
+    }
+
+    75% {
+        background-image: linear-gradient(to right, black, transparent 75%);
+    }
+
+    80% {
+        background-image: linear-gradient(to right, black, transparent 80%);
+    }
+
+    85% {
+        background-image: linear-gradient(to right, black, transparent 85%);
+    }
+
+    90% {
+        background-image: linear-gradient(to right, black, transparent 90%);
+    }
+
+    95% {
+        background-image: linear-gradient(to right, black, transparent 95%);
+    }
+
+    100% {
+        background-image: linear-gradient(to right, black, transparent 100%);
+    }
+
+}
