@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import "./LibraryGames.css";
 import type { game } from "../types/game";
 
@@ -16,10 +16,24 @@ export default function LibraryGames({
 }: LibraryGamesProps) {
   const [selectedIndexState, setSelectedIndexState] = useState(0);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const [hasInitialized, setHasInitialized] = useState<boolean>(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const gamesListRef = useRef<HTMLUListElement | null>(null);
   const itemRefs = useRef<Array<HTMLLIElement | null>>([]);
   const navigate = useNavigate();
+  const location = useLocation();
+  const [cancelAnimation, setCancelAnimation] = useState(
+    (location.state as { fromGame?: boolean })?.fromGame ?? false,
+  );
+  const lastSelId = (location.state as { gameId?: number })?.gameId ?? null;
+  useEffect(() => {
+    console.log(location);
+    if (cancelAnimation) {
+      setTimeout(() => {
+        setCancelAnimation(false);
+      }, 1000);
+    }
+  }, [cancelAnimation]);
 
   const filteredGames = games.filter((game) =>
     game.name.toLowerCase().includes(searchQuery.toLowerCase()),
@@ -90,7 +104,9 @@ export default function LibraryGames({
       }, 1);
     }
     setTimeout(() => {
-      navigate(`/game/${filteredGames[activeIndex].id}`);
+      navigate(
+        `/game/${filteredGames[activeIndex].id}/${filteredGames[activeIndex].platform}`,
+      );
     }, 1000);
   };
 
@@ -108,14 +124,34 @@ export default function LibraryGames({
     filteredGames.length > 0
       ? Math.min(selectedIndexState, filteredGames.length - 1)
       : 0;
-
   const normalizedHoveredIndex =
     hoveredIndex !== null && hoveredIndex < filteredGames.length
       ? hoveredIndex
       : null;
 
+  const lastSelectedIndex = filteredGames.findIndex(
+    (game) => game.id == lastSelId,
+  );
+
   const activeIndex =
-    normalizedHoveredIndex !== null ? normalizedHoveredIndex : selectedIndex;
+    normalizedHoveredIndex !== null
+      ? normalizedHoveredIndex
+      : lastSelectedIndex !== selectedIndex &&
+          !hasInitialized &&
+          lastSelectedIndex !== -1
+        ? lastSelectedIndex
+        : selectedIndex;
+
+  useEffect(() => {
+    if (lastSelectedIndex !== -1 && !hasInitialized) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setSelectedIndexState(lastSelectedIndex);
+      setHasInitialized(true);
+    } else {
+      setHasInitialized(true);
+      return;
+    }
+  }, [lastSelectedIndex]);
 
   useEffect(() => {
     containerRef.current?.focus();
@@ -130,6 +166,7 @@ export default function LibraryGames({
   }, [libraryOrientation]);
 
   useEffect(() => {
+    console.log(selectedIndexState);
     const selectedItem = itemRefs.current[selectedIndex];
     const list = gamesListRef.current;
     if (!selectedItem || !list) {
@@ -188,16 +225,20 @@ export default function LibraryGames({
             <>
               {filteredGames[activeIndex].logo ? (
                 <img
-                  className="game-logo"
+                  className={`game-logo ${cancelAnimation ? "cancel-animation" : ""}`}
                   src={filteredGames[activeIndex].logo}
                   alt={`${filteredGames[activeIndex].name}`}
                 />
               ) : (
-                <h2 className="game-name">{filteredGames[activeIndex].name}</h2>
+                <h2
+                  className={`game-name ${cancelAnimation ? "cancel-animation" : ""}`}
+                >
+                  {filteredGames[activeIndex].name}
+                </h2>
               )}
               {filteredGames[activeIndex].background && (
                 <div
-                  className="game-background"
+                  className={`game-background ${cancelAnimation ? "cancel-animation" : ""}`}
                   style={{
                     backgroundImage: `url(${filteredGames[activeIndex].background})`,
                   }}

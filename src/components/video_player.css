@@ -1,0 +1,203 @@
+.video-container {
+    position: relative;
+    margin: auto 2rem 2rem auto;
+    width: 75%;
+    animation: left-animation 0.7s ease-in-out;
+    overflow: hidden;
+    border-radius: 5px;
+}
+
+
+
+.game-trailer {
+    margin: auto 2rem 2rem auto;
+    width: 100%;
+    border-radius: 5px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.383);
+    animation: fade-in-animation 0.7s ease-in-out;
+}
+
+.video-controls {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    transform: translateY(-23%);
+    border-radius: 0 0 5px 5px;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
+    padding: 2rem 1rem 1rem 1rem;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.video-container:hover .video-controls {
+    opacity: 1;
+}
+
+
+.progress-container {
+    width: 100%;
+    margin-bottom: 1rem;
+}
+
+.progress-slider {
+    width: 100%;
+    height: 4px;
+    appearance: none;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 2px;
+    outline: none;
+    cursor: pointer;
+    transition: height 0.2s ease;
+}
+
+.progress-slider:hover {
+    height: 6px;
+}
+
+.progress-slider::-webkit-slider-thumb {
+    appearance: none;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: white;
+    cursor: pointer;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+}
+
+
+.progress-slider::-moz-range-thumb {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: white;
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+}
+
+
+.controls-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.left-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex: 1;
+}
+
+
+.control-button {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 0.5rem;
+    min-width: 40px;
+    height: 40px;
+}
+
+.control-button:hover {
+    background: rgba(255, 255, 255, 0.4);
+    transform: scale(1.1);
+}
+
+.control-button .material-symbols-outlined {
+    font-size: 1.3rem;
+}
+
+.fullscreen-btn {
+    margin-left: auto;
+}
+
+
+.volume-control {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 0.5rem 0.75rem;
+    border-radius: 4px;
+}
+
+.volume-icon {
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+
+.volume-slider {
+    width: 80px;
+    height: 4px;
+    appearance: none;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 2px;
+    outline: none;
+    cursor: pointer;
+}
+
+.volume-slider::-webkit-slider-thumb {
+    appearance: none;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: white;
+    cursor: pointer;
+}
+
+.volume-slider::-moz-range-thumb {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: white;
+    cursor: pointer;
+    border: none;
+}
+
+
+.time-display {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.9rem;
+    font-weight: 600;
+    min-width: 100px;
+    text-align: right;
+}
+
+
+.video-container:fullscreen {
+    width: 100vw;
+    height: 100vh;
+}
+
+.video-container:fullscreen .game-trailer {
+    width: 100%;
+    height: 100%;
+}
+
+.video-container:fullscreen .video-controls {
+    opacity: 1;
+}
+
+@media (max-width: 1024px) {
+    .video-container {
+        width: 90%;
+    }
+
+    .left-controls {
+        flex-wrap: wrap;
+    }
+
+    .volume-slider {
+        width: 60px;
+    }
+}

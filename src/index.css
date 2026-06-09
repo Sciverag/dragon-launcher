@@ -67,6 +67,10 @@ body {
     pointer-events: none;
 }
 
+.cancel-animation {
+    animation-duration: 0s !important;
+}
+
 .ripple:nth-child(4) {
     width: 120vw;
     height: 120vw;
@@ -274,14 +278,14 @@ body {
 
 @keyframes left-animation {
     0% {
-        transform: translateX(200%);
+        transform: translateX(180%);
         opacity: 0;
     }
 }
 
 @keyframes right-animation {
     0% {
-        transform: translateX(-200%);
+        transform: translateX(-180%);
         opacity: 0;
     }
 }

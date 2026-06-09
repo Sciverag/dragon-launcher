@@ -54,7 +54,6 @@
     overflow-x: auto;
     scroll-snap-type: x mandatory;
     scrollbar-width: none;
-    scrollbar-color: rgba(255, 255, 255, 0.22) rgba(0, 0, 0, 0.35);
     -ms-overflow-style: none;
     height: 300px;
     margin-left: auto;
