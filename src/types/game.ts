@@ -4,6 +4,7 @@ export type game = {
     cover?: string;
     header?: string;
     logo?: string;
+    icon?: string;
     background?: string;
     platform: "Steam" | "Epic" | "Custom";
     last_played: number;

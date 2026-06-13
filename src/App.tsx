@@ -21,7 +21,10 @@ function App() {
       <Route path="/" element={<Home />} />
       <Route path="/library" element={<Library />} />
       <Route path="/game/:gameId/:gamePlatform" element={<Game />} />
-      <Route path="/playing/:gameId/:gamePlatform" element={<Playing />} />
+      <Route
+        path="/playing/:gameId/:gameName/:gamePlatform"
+        element={<Playing />}
+      />
       <Route path="/register" element={<Register />} />
     </Routes>
   );

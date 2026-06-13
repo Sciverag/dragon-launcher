@@ -13,12 +13,14 @@ export async function existsInCache(appId: number) {
     const coverPath = await join(base, 'dragon-launcher', 'cache', 'images', 'cover', `${appId}.webp`)
     const backPath = await join(base, 'dragon-launcher', 'cache', 'images', 'background', `${appId}.webp`)
     const logoPath = await join(base, 'dragon-launcher', 'cache', 'images', 'logo', `${appId}.webp`)
+    const iconPath = await join(base, 'dragon-launcher', 'cache', 'images', 'icon', `${appId}.webp`)
 
     const coverExists = await exists(coverPath);
     const backExists = await exists(backPath)
     const logoExists = await exists(logoPath)
+    const iconExists = await exists(iconPath)
 
-    return coverExists && backExists && logoExists
+    return coverExists && backExists && logoExists && iconExists
 
 }
 
@@ -37,8 +39,6 @@ export async function cacheImage(url: string, localPath: string) {
     } else {
         dir = localPath.split('\\').slice(0, -1).join('\\');
     }
-
-    console.log(dir)
 
     await mkdir(dir, { recursive: true });
     const arrayBuffer = await response.arrayBuffer();

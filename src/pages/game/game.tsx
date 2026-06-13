@@ -37,7 +37,19 @@ function Game() {
     }
   };
 
-  const handleNavigationChange = () => {
+  const playPlayPressedAnimations = () => {
+    playTransitionAnimations();
+    const name_game = document.querySelector(".name-game-detail");
+    if (name_game) {
+      name_game.classList.add("grid");
+    }
+    const logo_game = document.querySelector(".logo-game-detail");
+    if (logo_game) {
+      logo_game.classList.add("grid");
+    }
+  };
+
+  const playTransitionAnimations = () => {
     const game_container = document.querySelector(".game-container");
     if (game_container) {
       game_container.classList.add("reverse-animation");
@@ -74,6 +86,17 @@ function Game() {
     if (videoContainer) {
       videoContainer.classList.add("reverse-animation");
     }
+  };
+
+  const handlePlayPressed = () => {
+    playPlayPressedAnimations();
+    setTimeout(() => {
+      navigate(`/playing/${gameId}/${game?.name}/${gamePlatform}`);
+    }, 1000);
+  };
+
+  const handleNavigationChange = () => {
+    playTransitionAnimations();
     setTimeout(() => {
       navigate("/library", { state: { fromGame: true, gameId: gameId } });
     }, 1000);
@@ -267,7 +290,9 @@ function Game() {
           </div>
         </section>
         <section className="game-buttons-container">
-          <button className="button">Jugar</button>
+          <button onClick={handlePlayPressed} className="button">
+            Jugar
+          </button>
           <button className="button">
             <span className="material-symbols-outlined">trophy</span>
           </button>

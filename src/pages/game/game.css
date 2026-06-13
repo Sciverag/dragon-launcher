@@ -227,13 +227,13 @@
 
 @keyframes name-logo-spawn {
     0% {
-        transform: scale(1) translateY(30vh);
+        transform: scale(1) translateY(30vh) translateX(0);
     }
 }
 
 @keyframes name-logo-spawn-alter {
     0% {
-        transform: scale(1) translateX(-150%);
+        transform: scale(1) translateY(0) translateX(-150%);
     }
 }
 

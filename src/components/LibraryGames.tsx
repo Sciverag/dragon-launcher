@@ -29,6 +29,7 @@ export default function LibraryGames({
   const [logoHasError, setLogoHasError] = useState<boolean>(false);
   const [changeBackgroundOnce, setChangeBackgroundOnce] = useState<number>(0);
   const [changeLogoOnce, setChangeLogoOnce] = useState<number>(0);
+  const [changeIconOnce, setChangeIconOnce] = useState<number>(0);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const gamesListRef = useRef<HTMLUListElement | null>(null);
   const itemRefs = useRef<Array<HTMLLIElement | null>>([]);
@@ -54,6 +55,7 @@ export default function LibraryGames({
     setLogoHasError(false);
     setChangeBackgroundOnce(0);
     setChangeLogoOnce(0);
+    setChangeIconOnce(0);
     const game_logo = document.querySelector(".game-logo");
     const game_name = document.querySelector(".game-name");
     if (game_logo) {
@@ -81,12 +83,27 @@ export default function LibraryGames({
     }
   };
 
-  const handlePlay = () => {
-    window.location.href = `steam://launch/${filteredGames[activeIndex].id}/dialog`;
+  const playPlatingAnimations = () => {
+    playTransitionAnimations();
+    const game_logo = document.querySelector(".game-logo");
+    const game_name = document.querySelector(".game-name");
+    if (game_logo) {
+      game_logo.classList.add("reverse-animation");
+      game_logo.classList.add("hidden");
+      setTimeout(() => {
+        game_logo.classList.remove("hidden");
+      }, 1);
+    }
+    if (game_name) {
+      game_name.classList.add("reverse-animation");
+      game_name.classList.add("hidden");
+      setTimeout(() => {
+        game_logo?.classList.remove("hidden");
+      }, 1);
+    }
   };
 
-  const handleGamePageNav = (clickedIndex: number) => {
-    setSelectedIndexState(clickedIndex);
+  const playTransitionAnimations = () => {
     const library_header = document.querySelector(".library-header");
     if (library_header) {
       library_header.classList.add("reverse-animation");
@@ -129,6 +146,20 @@ export default function LibraryGames({
         game_button.classList.remove("hidden");
       }, 1);
     }
+  };
+
+  const handlePlay = () => {
+    playPlatingAnimations();
+    setTimeout(() => {
+      navigate(
+        `/playing/${filteredGames[activeIndex].id}/${filteredGames[activeIndex].name}/${filteredGames[activeIndex].platform}`,
+      );
+    }, 1000);
+  };
+
+  const handleGamePageNav = (clickedIndex: number) => {
+    setSelectedIndexState(clickedIndex);
+    playTransitionAnimations();
     setTimeout(() => {
       navigate(
         `/game/${filteredGames[activeIndex].id}/${filteredGames[activeIndex].platform}`,
@@ -178,6 +209,7 @@ export default function LibraryGames({
       setSelectedIndexState(lastSelectedIndex);
       setChangeBackgroundOnce(1);
       setChangeLogoOnce(1);
+      setChangeIconOnce(1);
       setHasInitialized(true);
     } else {
       return;
@@ -306,6 +338,7 @@ export default function LibraryGames({
                 selectedIndex={selectedIndex}
                 changeBackgroundOnce={changeBackgroundOnce}
                 changeLogoOnce={changeLogoOnce}
+                changeIconOnce={changeIconOnce}
                 activeIndex={activeIndex}
                 itemRefs={itemRefs}
                 handleGamePageNav={handleGamePageNav}
@@ -313,6 +346,7 @@ export default function LibraryGames({
                 setSelectedIndexState={setSelectedIndexState}
                 setChangeBackgroundOnce={setChangeBackgroundOnce}
                 setChangeLogoOnce={setChangeLogoOnce}
+                setChangeIconOnce={setChangeIconOnce}
               />
             ))}
           </ul>

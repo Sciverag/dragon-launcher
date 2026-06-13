@@ -223,7 +223,7 @@ body {
 
 @keyframes ripple-animation {
     0% {
-        transform: scale(1);
+        transform: scale(0);
         opacity: 0.7;
     }
 

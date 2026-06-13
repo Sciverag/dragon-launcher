@@ -18,6 +18,7 @@ interface LibraryCardProps {
   selectedIndex: number;
   changeBackgroundOnce: number;
   changeLogoOnce: number;
+  changeIconOnce: number;
   activeIndex: number;
   itemRefs: React.RefObject<(HTMLLIElement | null)[]>;
   handleGamePageNav: (clickedIndex: number) => void;
@@ -25,6 +26,7 @@ interface LibraryCardProps {
   setSelectedIndexState: Dispatch<SetStateAction<number>>;
   setChangeBackgroundOnce: Dispatch<SetStateAction<number>>;
   setChangeLogoOnce: Dispatch<SetStateAction<number>>;
+  setChangeIconOnce: Dispatch<SetStateAction<number>>;
 }
 
 export default function LibraryCard({
@@ -34,6 +36,7 @@ export default function LibraryCard({
   selectedIndex,
   changeBackgroundOnce,
   changeLogoOnce,
+  changeIconOnce,
   activeIndex,
   itemRefs,
   handleGamePageNav,
@@ -41,14 +44,17 @@ export default function LibraryCard({
   setSelectedIndexState,
   setChangeBackgroundOnce,
   setChangeLogoOnce,
+  setChangeIconOnce,
 }: LibraryCardProps) {
   const [hasInitialized, setHasInitialized] = useState<boolean>(false);
   const [coverPath, setCoverPath] = useState<string>(game.cover as string);
+  const [iconPath, setIconPath] = useState<string>(game.icon as string);
   const [backgroundPath, setBackgroundPath] = useState<string>(
     game.background as string,
   );
   const [logoPath, setLogoPath] = useState<string | null>(null);
-  const { background, setBackground, logo, setLogo } = useContext(ThemeContext);
+  const { background, setBackground, logo, setLogo, icon, setIcon } =
+    useContext(ThemeContext);
 
   const obtainGameData = async () => {
     const gameIsInCache = await existsInCache(game.id as number);
@@ -62,6 +68,7 @@ export default function LibraryCard({
       game.cover = assets.libraryCapsule;
       game.logo = assets.logo;
       game.background = assets.background;
+      game.icon = assets.icon;
 
       obtainGameCache();
     });
@@ -110,6 +117,22 @@ export default function LibraryCard({
       setLogoPath(url);
     }
 
+    async function loadIcon() {
+      const local = await getCachedImage(
+        game.id as number,
+        "icon",
+        game.icon as string,
+      );
+
+      const data = await readFile(local);
+
+      const blob = new Blob([data], { type: "image/webp" });
+      const url = URL.createObjectURL(blob);
+
+      setIconPath(url);
+    }
+
+    loadIcon();
     loadCover();
     loadBackground();
     loadLogo();
@@ -118,6 +141,7 @@ export default function LibraryCard({
   useEffect(() => {
     if (!hasInitialized) {
       obtainGameData();
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setHasInitialized(true);
     }
   }, [game.id]);
@@ -161,6 +185,26 @@ export default function LibraryCard({
     setLogo,
     changeLogoOnce,
     setChangeLogoOnce,
+  ]);
+
+  useEffect(() => {
+    if (
+      activeIndex === index &&
+      hasInitialized &&
+      iconPath &&
+      changeIconOnce < 1
+    ) {
+      setChangeIconOnce(1);
+      setIcon(iconPath);
+    }
+  }, [
+    iconPath,
+    activeIndex,
+    hasInitialized,
+    index,
+    setIcon,
+    changeIconOnce,
+    setChangeIconOnce,
   ]);
 
   return (
