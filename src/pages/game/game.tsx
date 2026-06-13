@@ -1,5 +1,6 @@
 import {
   useCallback,
+  useContext,
   useEffect,
   useRef,
   useState,
@@ -11,15 +12,17 @@ import axios from "axios";
 import "./game.css";
 import { useLibraryStore } from "../../stores/libraryStore";
 import VideoPlayer from "../../components/video_player";
+import { ThemeContext } from "../../userContext";
 
 function Game() {
+  const { background, logo } = useContext(ThemeContext);
   const { gameId, gamePlatform } = useParams();
   const orientation = useLibraryStore((state) => state.orientation);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [game, setGame] = useState<game_detail | null>(null);
-  const [gameLogo, setGameLogo] = useState<string | null>(null);
   const [playerAchievements, setPlayerAchievements] = useState<number>(10);
   const [dominantColor, setDominantColor] = useState<string>("#8B4513");
+  const [logoHasError, setLogoHasError] = useState<boolean>(false);
   const hasInitialized = useRef(false);
   const navigate = useNavigate();
 
@@ -126,21 +129,6 @@ function Game() {
     [],
   );
 
-  const getLogo = useCallback(async () => {
-    const url = `https://cdn.cloudflare.steamstatic.com/steam/apps/${gameId}/logo.png`;
-
-    try {
-      const response = await fetch(url);
-      if (response.ok) {
-        setGameLogo(url);
-      } else {
-        setGameLogo(null);
-      }
-    } catch {
-      setGameLogo(null);
-    }
-  }, [gameId]);
-
   const extractDominantColor = useCallback(
     async (imageUrl: string) => {
       try {
@@ -206,6 +194,7 @@ function Game() {
       if (!url) return;
 
       const response = await axios.get(url);
+      console.log(response);
       const gameData = response.data[gameId as string].data;
 
       const firstMovie = gameData.movies?.[0];
@@ -228,9 +217,7 @@ function Game() {
         achievements: gameData.achievements,
       };
       setGame(gameDetails);
-      console.log(gameData);
-      const backgroundUrl = `https://cdn.akamai.steamstatic.com/steam/apps/${gameId}/library_hero.jpg`;
-      extractDominantColor(backgroundUrl);
+      extractDominantColor(background);
     } catch (error) {
       console.error("Failed to fetch game details:", error);
     }
@@ -240,7 +227,6 @@ function Game() {
     if (hasInitialized.current) return;
     hasInitialized.current = true;
 
-    getLogo();
     fetchGameDetails();
   }, [gameId, gamePlatform]);
 
@@ -261,16 +247,11 @@ function Game() {
       className="game-container"
     >
       <section className="game-details-container">
-        <div
-          className="background-game-detail"
-          style={{
-            backgroundImage: `url(${game?.background})`,
-          }}
-        ></div>
-        {gameLogo ? (
+        {logo && !logoHasError ? (
           <img
-            src={gameLogo}
+            src={logo}
             className={`logo-game-detail ${orientation}`}
+            onError={() => setLogoHasError(true)}
           ></img>
         ) : (
           <h1 className={`name-game-detail ${orientation}`}>{game?.name}</h1>

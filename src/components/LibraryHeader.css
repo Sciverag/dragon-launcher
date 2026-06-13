@@ -1,5 +1,6 @@
 .library-header {
     display: flex;
+    position: relative;
     align-items: center;
     justify-content: space-around;
     padding: 1.5rem;
@@ -11,4 +12,15 @@
     box-shadow: 0 0 0 2px #ffffff6d, 0 0 0 4px #ff440000;
     backdrop-filter: blur(10px);
     animation: down-animation 0.9s ease-out;
+}
+
+.search-container {
+    background: rgba(0, 0, 0, 0.632);
+    border-radius: 20px;
+    padding: 1rem;
+    box-shadow: 0 0 0 2px #ffffff6d, 0 0 0 4px #ff440000;
+    position: absolute;
+    backdrop-filter: blur(10px);
+    bottom: -90%;
+    animation: fade-in-animation 0.2s ease-out;
 }

@@ -104,7 +104,6 @@ export default function Login() {
               placeholder="Email"
               disabled={loading}
               required
-              autoFocus
             />
           </div>
 

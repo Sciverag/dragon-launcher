@@ -25,6 +25,29 @@ export const LibraryHeader = ({
     onSearch?.(value);
   };
 
+  const handleOpenSearch = () => {
+    const search_container = document.querySelector(".search-container");
+
+    if (searchOpen) {
+      if (search_container) {
+        search_container.classList.add("reverse-animation");
+        search_container.classList.add("hidden");
+        setTimeout(() => {
+          search_container.classList.remove("hidden");
+        }, 0);
+      }
+
+      setTimeout(() => {
+        setSearchOpen(false);
+      }, 200);
+    } else {
+      setSearchOpen(true);
+      if (search_container) {
+        search_container.classList.remove("reverse-animation");
+      }
+    }
+  };
+
   const handleOrientationToggle = () => {
     const newOrientation = currentOrientation === "grid" ? "list" : "grid";
     onOrientationChange?.(newOrientation);
@@ -57,11 +80,10 @@ export const LibraryHeader = ({
     }
     const libraryGames = document.querySelector(".library-games");
     if (libraryGames) {
+      libraryGames.classList.add("reverse-animation");
       libraryGames.classList.add("hidden");
       setTimeout(() => {
         libraryGames.classList.remove("hidden");
-        libraryGames.classList.add("visible");
-        libraryGames.classList.add("reverse-animation");
       }, 1);
     }
     const game_button = document.querySelector(".game-button");
@@ -109,12 +131,27 @@ export const LibraryHeader = ({
       </button>
       <button
         className="button"
-        onClick={() => setSearchOpen(true)}
+        onClick={handleOpenSearch}
         title="Buscar"
         aria-label="Búsqueda"
       >
         <span className="material-symbols-outlined">search</span>
       </button>
+
+      <div hidden={!searchOpen} className="search-container">
+        <div className="form-group">
+          <label htmlFor="text">
+            {" "}
+            <span className="material-symbols-outlined">search</span>
+          </label>
+          <input
+            type="text"
+            id="searchQuery"
+            value={searchQuery}
+            onChange={handleSearchChange}
+          />
+        </div>
+      </div>
 
       <button
         className="button"

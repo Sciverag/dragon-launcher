@@ -1,10 +1,12 @@
 export type game = {
     id: string | number;
     name: string;
-    cover: string;
+    cover?: string;
+    header?: string;
     logo?: string;
-    background: string;
+    background?: string;
     platform: "Steam" | "Epic" | "Custom";
+    last_played: number;
 };
 
 export type game_detail = {

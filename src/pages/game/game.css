@@ -34,39 +34,45 @@
 
 .name-game-detail {
     cursor: default;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
     color: white;
     font-weight: bold;
     font-size: 2.5rem;
     text-align: center;
     width: 400px;
+    height: 350px;
     padding: 0.5rem;
-    margin-top: 5rem;
+    margin-top: 2rem;
     margin-left: 2rem;
     transform: scale(1.2) translateX(2rem);
-    filter: drop-shadow(1px 1px 1px #00000050) drop-shadow(-1px -1px 1px #00000050) drop-shadow(1px -1px 1px #00000050) drop-shadow(-1px 1px 1px #00000050);
+    filter: drop-shadow(1px 1px 10px black);
     animation: name-logo-spawn 0.7s ease-in-out;
 }
 
 .logo-game-detail {
+    position: absolute;
     width: 400px;
-    height: auto;
+    height: 350px;
     margin-top: 2rem;
-    margin-left: 5%;
+    margin-left: 2rem;
     object-fit: contain;
     object-position: center;
-    transform: scale(1.15) translateX(0);
-    filter: drop-shadow(1px 1px 1px #ffffff50) drop-shadow(-1px -1px 1px #ffffff50) drop-shadow(1px -1px 1px #ffffff50) drop-shadow(-1px 1px 1px #00000050);
+    transform: scale(1.15) translateX(10%);
+    filter: drop-shadow(1px 1px 10px black);
     animation: name-logo-spawn 0.7s ease-in-out;
 }
 
 .name-game-detail.grid,
 .logo-game-detail.grid {
-    animation: name-logo-spawn-alter 0.7s ease-in-out;
+    animation: name-logo-spawn-alter 0.9s ease-in-out;
 }
 
 .secondary-info-container {
     width: fit-content;
-    margin-top: 2rem;
+    margin-top: calc(350px + 1rem);
     margin-left: 2rem;
     animation: right-animation 0.8s ease-in-out;
 }
@@ -221,13 +227,13 @@
 
 @keyframes name-logo-spawn {
     0% {
-        transform: scale(1) translateY(calc(40vh - 8.5rem));
+        transform: scale(1) translateY(30vh);
     }
 }
 
 @keyframes name-logo-spawn-alter {
     0% {
-        transform: scale(1) translateX(-100%);
+        transform: scale(1) translateX(-150%);
     }
 }
 

@@ -99,7 +99,29 @@
     width: 200px;
     height: 250px;
     object-fit: cover;
+    position: relative;
     transition: transform 0.2s ease-in-out;
+}
+
+.game-cover::after {
+    content: "";
+    width: 200px;
+    left: 0;
+    top: 0;
+    position: absolute;
+    height: 250px;
+    background-color: gray;
+    animation: cover-loading 0.5s ease-in-out infinite alternate-reverse;
+}
+
+@keyframes cover-loading {
+    0% {
+        background-color: gray;
+    }
+
+    100% {
+        background-color: rgb(41, 41, 41);
+    }
 }
 
 .game-background {
@@ -122,28 +144,37 @@
 
 
 .game-logo {
+    position: absolute;
     width: 400px;
-    height: auto;
+    height: 350px;
     object-fit: contain;
+    object-position: center;
     transition: transform 0.2s ease-in-out;
-    margin-top: auto;
+    margin-top: 2rem;
     margin-left: 1rem;
-    filter: drop-shadow(1px 1px 1px #00000050) drop-shadow(-1px -1px 1px #00000050) drop-shadow(1px -1px 1px #00000050) drop-shadow(-1px 1px 1px #00000050);
+    top: 30vh;
+    filter: drop-shadow(1px 1px 10px black);
     animation: right-animation 0.7s ease-out;
     transition: all 0.2s ease-in-out;
 }
 
 .game-name {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     cursor: default;
     color: white;
+    position: absolute;
     font-weight: bold;
     font-size: 2.5rem;
     text-align: center;
     width: 400px;
+    height: 350px;
+    top: 30vh;
     padding: 0.5rem;
-    margin-top: auto;
+    margin-top: 2rem;
     margin-left: 1rem;
-    filter: drop-shadow(1px 1px 1px #00000050) drop-shadow(-1px -1px 1px #00000050) drop-shadow(1px -1px 1px #00000050) drop-shadow(-1px 1px 1px #00000050);
+    filter: drop-shadow(1px 1px 10px black);
     animation: right-animation 0.7s ease-out;
 
 }
@@ -166,7 +197,7 @@
     display: flex;
     justify-content: space-between;
     width: 99vw;
-    bottom: 90px;
+    bottom: 108px;
     z-index: 2;
     height: 290px;
     pointer-events: none;

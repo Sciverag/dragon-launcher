@@ -190,7 +190,6 @@ export default function Register() {
               placeholder="Nombre de usuario"
               disabled={loading}
               required
-              autoFocus
             />
           </div>
 
@@ -207,7 +206,6 @@ export default function Register() {
               placeholder="Email"
               disabled={loading}
               required
-              autoFocus
             />
           </div>
 

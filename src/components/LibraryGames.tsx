@@ -1,7 +1,15 @@
-import { useEffect, useRef, useState, type KeyboardEvent } from "react";
+import {
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+  type KeyboardEvent,
+} from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import "./LibraryGames.css";
 import type { game } from "../types/game";
+import LibraryCard from "./LibraryCard";
+import { ThemeContext } from "../userContext";
 
 interface LibraryGamesProps {
   libraryOrientation: "grid" | "list";
@@ -14,9 +22,13 @@ export default function LibraryGames({
   searchQuery,
   games,
 }: LibraryGamesProps) {
+  const { logo } = useContext(ThemeContext);
   const [selectedIndexState, setSelectedIndexState] = useState(0);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [hasInitialized, setHasInitialized] = useState<boolean>(false);
+  const [logoHasError, setLogoHasError] = useState<boolean>(false);
+  const [changeBackgroundOnce, setChangeBackgroundOnce] = useState<number>(0);
+  const [changeLogoOnce, setChangeLogoOnce] = useState<number>(0);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const gamesListRef = useRef<HTMLUListElement | null>(null);
   const itemRefs = useRef<Array<HTMLLIElement | null>>([]);
@@ -27,7 +39,6 @@ export default function LibraryGames({
   );
   const lastSelId = (location.state as { gameId?: number })?.gameId ?? null;
   useEffect(() => {
-    console.log(location);
     if (cancelAnimation) {
       setTimeout(() => {
         setCancelAnimation(false);
@@ -40,11 +51,22 @@ export default function LibraryGames({
   );
 
   const handleSelectedChange = () => {
+    setLogoHasError(false);
+    setChangeBackgroundOnce(0);
+    setChangeLogoOnce(0);
     const game_logo = document.querySelector(".game-logo");
+    const game_name = document.querySelector(".game-name");
     if (game_logo) {
       game_logo.classList.add("hidden");
       setTimeout(() => {
         game_logo.classList.remove("hidden");
+      }, 1);
+    }
+
+    if (game_name) {
+      game_name.classList.add("hidden");
+      setTimeout(() => {
+        game_name.classList.remove("hidden");
       }, 1);
     }
   };
@@ -57,6 +79,10 @@ export default function LibraryGames({
         games_list.classList.remove("hidden");
       }, 1);
     }
+  };
+
+  const handlePlay = () => {
+    window.location.href = `steam://launch/${filteredGames[activeIndex].id}/dialog`;
   };
 
   const handleGamePageNav = (clickedIndex: number) => {
@@ -143,21 +169,39 @@ export default function LibraryGames({
         : selectedIndex;
 
   useEffect(() => {
-    if (lastSelectedIndex !== -1 && !hasInitialized) {
+    if (
+      lastSelectedIndex !== -1 &&
+      filteredGames.length !== 0 &&
+      !hasInitialized
+    ) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setSelectedIndexState(lastSelectedIndex);
+      setChangeBackgroundOnce(1);
+      setChangeLogoOnce(1);
       setHasInitialized(true);
     } else {
-      setHasInitialized(true);
       return;
     }
   }, [lastSelectedIndex]);
 
   useEffect(() => {
     containerRef.current?.focus();
+    const game_background = document.querySelector(".game-background");
+    if (
+      game_background &&
+      game_background.classList.contains("reverse-animation")
+    ) {
+      game_background.classList.add("hidden");
+      game_background.classList.remove("reverse-animation");
+
+      setTimeout(() => {
+        game_background.classList.remove("hidden");
+      }, 100);
+    }
   }, []);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     handleSelectedChange();
   }, [activeIndex]);
 
@@ -166,7 +210,6 @@ export default function LibraryGames({
   }, [libraryOrientation]);
 
   useEffect(() => {
-    console.log(selectedIndexState);
     const selectedItem = itemRefs.current[selectedIndex];
     const list = gamesListRef.current;
     if (!selectedItem || !list) {
@@ -223,11 +266,13 @@ export default function LibraryGames({
         <>
           {filteredGames[activeIndex] && (
             <>
-              {filteredGames[activeIndex].logo ? (
+              {logo && !logoHasError ? (
                 <img
                   className={`game-logo ${cancelAnimation ? "cancel-animation" : ""}`}
-                  src={filteredGames[activeIndex].logo}
-                  alt={`${filteredGames[activeIndex].name}`}
+                  src={logo}
+                  onError={() => {
+                    setLogoHasError(true);
+                  }}
                 />
               ) : (
                 <h2
@@ -236,18 +281,12 @@ export default function LibraryGames({
                   {filteredGames[activeIndex].name}
                 </h2>
               )}
-              {filteredGames[activeIndex].background && (
-                <div
-                  className={`game-background ${cancelAnimation ? "cancel-animation" : ""}`}
-                  style={{
-                    backgroundImage: `url(${filteredGames[activeIndex].background})`,
-                  }}
-                ></div>
-              )}
             </>
           )}
           {filteredGames[activeIndex] && (
-            <button className="button game-button">Jugar</button>
+            <button onClick={handlePlay} className="button game-button">
+              Jugar
+            </button>
           )}
           <div className="scrollbutton-container">
             <button className="scroll-button button" onClick={selectLeftGame}>
@@ -259,25 +298,22 @@ export default function LibraryGames({
           </div>
           <ul ref={gamesListRef} className={`games-list ${libraryOrientation}`}>
             {filteredGames.map((game, index) => (
-              <li
-                key={`${game.id}-${index}`}
-                onClick={() => handleGamePageNav(index)}
-                className={`game-card glass ${activeIndex === index ? "selected" : ""}`}
-                style={{ animationDelay: `${index * 0.08}s` }}
-                ref={(element) => {
-                  itemRefs.current[index] = element;
-                }}
-                role="option"
-                aria-selected={selectedIndex === index}
-                onMouseEnter={() => setHoveredIndex(index)}
-                onMouseLeave={() =>
-                  libraryOrientation === "list"
-                    ? setHoveredIndex(null)
-                    : setSelectedIndexState(index)
-                }
-              >
-                <img className="game-cover" src={game.cover} alt={game.name} />
-              </li>
+              <LibraryCard
+                key={index}
+                game={game}
+                index={index}
+                libraryOrientation={libraryOrientation}
+                selectedIndex={selectedIndex}
+                changeBackgroundOnce={changeBackgroundOnce}
+                changeLogoOnce={changeLogoOnce}
+                activeIndex={activeIndex}
+                itemRefs={itemRefs}
+                handleGamePageNav={handleGamePageNav}
+                setHoveredIndex={setHoveredIndex}
+                setSelectedIndexState={setSelectedIndexState}
+                setChangeBackgroundOnce={setChangeBackgroundOnce}
+                setChangeLogoOnce={setChangeLogoOnce}
+              />
             ))}
           </ul>
         </>
