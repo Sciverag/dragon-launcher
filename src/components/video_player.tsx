@@ -17,8 +17,8 @@ export default function VideoPlayer({
   const [isPlaying, setIsPlaying] = useState(true);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
-  const [volume, setVolume] = useState(1);
-  const [isMuted, setIsMuted] = useState(true);
+  const [volume, setVolume] = useState(0.01);
+  const [isMuted, setIsMuted] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const videoContainerRef = useRef<HTMLDivElement | null>(null);
 
@@ -41,6 +41,7 @@ export default function VideoPlayer({
       });
       video.addEventListener("play", handlePlay);
       video.addEventListener("pause", handlePause);
+      video.volume = volume;
       return () => {
         hls.destroy();
         video.removeEventListener("play", handlePlay);
@@ -195,7 +196,7 @@ export default function VideoPlayer({
                 type="range"
                 min="0"
                 max="1"
-                step="0.1"
+                step="0.001"
                 value={volume}
                 onChange={handleVolumeChange}
                 className="volume-slider"

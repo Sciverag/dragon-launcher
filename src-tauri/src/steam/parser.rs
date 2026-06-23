@@ -5,7 +5,8 @@ use serde::Serialize;
 pub struct Game {
     pub id: u32,
     pub name: String,
-    pub last_played: String
+    pub last_played: String,
+    pub platform: String
 }
 
 pub fn get_local_steam_games() -> Vec<Game> {
@@ -45,7 +46,9 @@ pub fn get_local_steam_games() -> Vec<Game> {
                         .unwrap_or("Unknown")
                         .to_string();
 
-                    games.push(Game { id, name, last_played });
+                    let platform = "Steam";
+
+                    games.push(Game { id, name, last_played, platform: platform.to_string() });
                 }
             }
         }

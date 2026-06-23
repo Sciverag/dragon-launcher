@@ -24,3 +24,12 @@
     bottom: -90%;
     animation: fade-in-animation 0.2s ease-out;
 }
+
+.header-button {
+    width: 56px;
+    height: 56px;
+}
+
+.header-button:has(> .header-avatar) {
+    padding: 0%;
+}

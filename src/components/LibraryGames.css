@@ -25,15 +25,14 @@
 }
 
 .games-list.grid {
-    display: grid;
+    display: flex;
     padding-top: 10px;
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    flex-wrap: wrap;
     align-items: center;
-    max-height: 70vh;
+    max-height: 100vh;
     margin-top: auto;
     margin-bottom: auto;
     overflow-y: auto;
-    scroll-snap-type: y mandatory;
     -ms-overflow-style: none;
     margin-left: auto;
     margin-right: auto;
@@ -101,6 +100,7 @@
     object-fit: cover;
     position: relative;
     transition: transform 0.2s ease-in-out;
+    animation: cover-loading 0.5s ease-in-out infinite alternate-reverse;
 }
 
 .game-cover::after {
@@ -130,7 +130,7 @@
     left: 0;
     width: 100vw;
     height: 100vh;
-    background-size: 100% 100%;
+    background-size: 100vw 100vh;
     background-position: center;
     background-repeat: no-repeat;
     background-attachment: fixed;

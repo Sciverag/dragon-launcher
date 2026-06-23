@@ -1,0 +1,138 @@
+.hero-container {
+    height: 35vh;
+    width: 100vw;
+    background: linear-gradient(20deg, rgb(47, 47, 47), rgb(12, 12, 12));
+}
+
+.avatar-container {
+    outline: solid 3px rgba(255, 255, 255, 0.523);
+    background: rgba(0, 0, 0, 0.304);
+    width: 100vw;
+    height: 15vh;
+    position: relative;
+    display: flex;
+}
+
+.avatar {
+    position: absolute;
+    border-radius: 250px;
+    width: 250px;
+    outline: solid 3px rgb(210, 210, 210);
+    margin-left: 4rem;
+    bottom: 1rem;
+}
+
+.name-title-container {
+    margin-left: calc(6rem + 250px);
+    margin-top: 1.5rem;
+    height: fit-content;
+}
+
+.user-name {
+    color: white;
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+.user-title {
+    font-size: 1.25rem;
+    margin-top: 0.5rem;
+    font-weight: bold;
+    color: rgb(179, 179, 179);
+}
+
+.platform-links-card {
+    width: min(960px, calc(100vw - 4rem));
+    margin: 3rem auto 0;
+    padding: 1.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 24px;
+    background: linear-gradient(135deg, rgba(11, 18, 32, 0.92), rgba(27, 40, 56, 0.92));
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+}
+
+.platform-links-label {
+    margin: 0 0 0.35rem;
+    color: rgba(255, 255, 255, 0.64);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.platform-links-title {
+    margin: 0;
+    font-size: 1.8rem;
+    color: white;
+}
+
+.platform-links-status {
+    margin: 0.75rem 0 0;
+    color: rgba(255, 255, 255, 0.84);
+}
+
+.platform-links-feedback {
+    margin: 0.75rem 0 0;
+    color: rgb(144, 205, 244);
+}
+
+.steam-connect-button {
+    border: none;
+    border-radius: 999px;
+    padding: 0.95rem 1.4rem;
+    background: linear-gradient(135deg, rgb(102, 192, 244), rgb(30, 104, 165));
+    color: white;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 120ms ease, filter 120ms ease;
+}
+
+.steam-connect-button:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.05);
+}
+
+@media (max-width: 900px) {
+    .avatar {
+        width: 180px;
+        margin-left: 1.5rem;
+    }
+
+    .name-title-container {
+        margin-left: calc(2.5rem + 180px);
+    }
+
+    .platform-links-card {
+        width: calc(100vw - 2rem);
+    }
+}
+
+@media (max-width: 640px) {
+    .avatar-container {
+        height: auto;
+        padding: 1.5rem 1rem;
+        flex-direction: column;
+    }
+
+    .avatar {
+        position: static;
+        margin: 0 auto;
+    }
+
+    .name-title-container {
+        margin: 1rem 0 0;
+        text-align: center;
+    }
+
+    .platform-links-card {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .steam-connect-button {
+        width: 100%;
+    }
+}

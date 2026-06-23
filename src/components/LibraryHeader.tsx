@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useAuthStore } from "../stores/authStore";
 import "./LibraryHeader.css";
 import { useNavigate } from "react-router-dom";
+import { ThemeContext } from "../userContext";
 
 interface LibraryHeaderProps {
   onOrientationChange?: (orientation: "grid" | "list") => void;
@@ -14,7 +15,9 @@ export const LibraryHeader = ({
   onSearch,
   currentOrientation = "list",
 }: LibraryHeaderProps) => {
+  const { setBackground, setLogo } = useContext(ThemeContext);
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
+  const avatar = useAuthStore((state) => state.user?.avatar);
   const navigate = useNavigate();
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -108,13 +111,15 @@ export const LibraryHeader = ({
     }
     setTimeout(() => {
       navigate(route);
+      setBackground("");
+      setLogo("");
     }, 1000);
   };
 
   return (
     <header className="library-header">
       <button
-        className="button"
+        className="button header-button"
         title={isLoggedIn ? "Perfil de usuario" : "Iniciar sesión"}
         aria-label="Menú de usuario"
         onClick={() =>
@@ -124,13 +129,13 @@ export const LibraryHeader = ({
         }
       >
         {isLoggedIn ? (
-          <img src="" alt="" />
+          <img className="header-avatar" src={avatar} />
         ) : (
           <span className="material-symbols-outlined">person</span>
         )}
       </button>
       <button
-        className="button"
+        className="button header-button"
         onClick={handleOpenSearch}
         title="Buscar"
         aria-label="Búsqueda"
@@ -154,7 +159,7 @@ export const LibraryHeader = ({
       </div>
 
       <button
-        className="button"
+        className="button header-button"
         onClick={handleOrientationToggle}
         title={`Cambiar orientación`}
         aria-label="Cambiar orientación"
@@ -167,7 +172,7 @@ export const LibraryHeader = ({
       </button>
 
       <button
-        className="button"
+        className="button header-button"
         title="Ajustes"
         aria-label="Ajustes de la aplicación"
         onClick={() => handleRouteChange("/settings")}

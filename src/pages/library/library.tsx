@@ -4,20 +4,26 @@ import { LibraryHeader } from "../../components/LibraryHeader";
 import "./library.css";
 import LibraryGames from "../../components/LibraryGames";
 import { useLibraryStore } from "../../stores/libraryStore";
-import type { game } from "../../types/game";
+import { useAuthStore } from "../../stores/authStore";
 import {
   getSteamLibrary,
   getSteamLocalLibrary,
+  mergeLibraries,
 } from "../../services/libraryService";
-import { getGameAssets } from "../../services/gameService";
 
 function Library() {
   const location = useLocation();
   const orientation = useLibraryStore((state) => state.orientation);
   const setOrientation = useLibraryStore((state) => state.setOrientation);
+  const games = useLibraryStore((state) => state.games);
+  const hasLoadedGames = useLibraryStore((state) => state.hasLoadedGames);
+  const setGames = useLibraryStore((state) => state.setGames);
+  const user = useAuthStore((state) => state.user);
   const [searchQuery, setSearchQuery] = useState("");
-  const [games, setGames] = useState<game[]>([]);
-  const [hasInitialized, setHasInitialized] = useState<boolean>(false);
+  const fromPlaying =
+    (location.state as { fromPlaying?: boolean })?.fromPlaying ?? false;
+  const shouldReloadLibrary = !hasLoadedGames || fromPlaying;
+  const [loading, setLoading] = useState<boolean>(shouldReloadLibrary);
   const [showRipples, setShowRipples] = useState(
     (location.state as { fromHome?: boolean })?.fromHome ?? false,
   );
@@ -30,16 +36,6 @@ function Library() {
     setSearchQuery(query);
   };
 
-  const getLocalGames = async () => {
-    const localGames: game[] = await getSteamLocalLibrary();
-    setGames(localGames.sort((a, b) => b.last_played - a.last_played));
-  };
-
-  const getGameLibrary = async () => {
-    const gameLibrary: game[] = await getSteamLibrary();
-    setGames(gameLibrary);
-  };
-
   useEffect(() => {
     if (showRipples) {
       setTimeout(() => {
@@ -49,11 +45,52 @@ function Library() {
   }, [showRipples]);
 
   useEffect(() => {
-    if (!hasInitialized) {
-      getLocalGames();
-      setHasInitialized(true);
+    if (!shouldReloadLibrary) {
+      setLoading(false);
+      return;
     }
-  }, []);
+
+    let cancelled = false;
+    setLoading(true);
+
+    const loadGames = async () => {
+      const localGames = await getSteamLocalLibrary();
+
+      if (cancelled) {
+        setLoading(false);
+        return;
+      }
+
+      if (!user?.steamId) {
+        setGames(localGames);
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const remoteGames = await getSteamLibrary();
+
+        if (cancelled) {
+          setLoading(false);
+          return;
+        }
+
+        const mergedGames = await mergeLibraries(localGames, remoteGames);
+        setGames(mergedGames);
+      } catch {
+        setGames(localGames);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadGames();
+
+    return () => {
+      cancelled = true;
+      setLoading(false);
+    };
+  }, [setGames, shouldReloadLibrary, user?.steamId]);
 
   return (
     <div className="library-container">
@@ -64,11 +101,14 @@ function Library() {
       />
       <main className="library-shell">
         <div className={`library-content ${orientation}`}>
-          <LibraryGames
-            libraryOrientation={orientation}
-            searchQuery={searchQuery}
-            games={games}
-          />
+          {!loading && games.length !== 0 && (
+            <LibraryGames
+              libraryOrientation={orientation}
+              searchQuery={searchQuery}
+              games={games}
+            />
+          )}
+
           <div className={`ripple-circles ${showRipples ? "visible" : ""}`}>
             <div className="ripple reverse-animation"></div>
             <div className="ripple reverse-animation"></div>

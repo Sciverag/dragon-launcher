@@ -1,10 +1,12 @@
 import { create } from 'zustand';
-
+import type { User } from '../types/user';
 interface AuthState {
   isLoggedIn: boolean;
-  user: { username: string } | null;
-  login: (username: string) => Promise<void>;
-  register: (username: string) => Promise<void>;
+  token: string | null;
+  user: User | null;
+  login: (user: User, token: string) => Promise<void>;
+  register: (user: User, token: string) => Promise<void>;
+  updateUser: (user: Partial<User>) => void;
   logout: () => void;
   checkAuth: () => void;
 }
@@ -12,20 +14,23 @@ interface AuthState {
 export const useAuthStore = create<AuthState>((set) => ({
   isLoggedIn: false,
   user: null,
+  token: null,
 
-  login: async (username: string) => {
+  login: async (user: User, token: string) => {
+
+    if (!token) {
+      throw new Error('No se recibio un token de autenticacion valido');
+    }
 
     try {
-
-      await new Promise((resolve) => setTimeout(resolve, 500));
-
-
-      localStorage.setItem('user', JSON.stringify({ username }));
+      localStorage.setItem('user', JSON.stringify(user));
       localStorage.setItem('isLoggedIn', 'true');
+      localStorage.setItem('token', token)
 
       set({
         isLoggedIn: true,
-        user: { username },
+        user: user,
+        token: token
       });
     } catch (error) {
       console.error('Error en login:', error);
@@ -33,17 +38,20 @@ export const useAuthStore = create<AuthState>((set) => ({
     }
   },
 
-  register: async (username: string) => {
+  register: async (user: User, token: string) => {
+
+    if (!token) {
+      throw new Error('No se recibio un token de autenticacion valido');
+    }
 
     try {
-
-      await new Promise((resolve) => setTimeout(resolve, 500));
-
-      localStorage.setItem('user', JSON.stringify({ username }));
+      localStorage.setItem('user', JSON.stringify(user));
       localStorage.setItem('isLoggedIn', 'true');
+      localStorage.setItem('token', token)
       set({
         isLoggedIn: true,
-        user: { username },
+        user: user,
+        token: token
       });
     } catch (error) {
       console.error('Error en registro:', error);
@@ -51,14 +59,35 @@ export const useAuthStore = create<AuthState>((set) => ({
     }
   },
 
+  updateUser: (userUpdate: Partial<User>) => {
+    const currentUser = useAuthStore.getState().user;
+
+    if (!currentUser) {
+      return;
+    }
+
+    const nextUser = {
+      ...currentUser,
+      ...userUpdate,
+    };
+
+    localStorage.setItem('user', JSON.stringify(nextUser));
+
+    set({
+      user: nextUser,
+    });
+  },
+
   logout: () => {
 
     localStorage.removeItem('user');
     localStorage.removeItem('isLoggedIn');
+    localStorage.removeItem('token')
 
     set({
       isLoggedIn: false,
       user: null,
+      token: null
     });
   },
 
@@ -66,17 +95,29 @@ export const useAuthStore = create<AuthState>((set) => ({
 
     const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
     const userStr = localStorage.getItem('user');
+    const token = localStorage.getItem('token');
 
-    if (isLoggedIn && userStr) {
+    if (isLoggedIn && userStr && token && token !== 'undefined') {
       try {
         const user = JSON.parse(userStr);
         set({
           isLoggedIn: true,
           user,
+          token,
         });
       } catch (error) {
         console.error('Error al parsear usuario:', error);
       }
+    } else {
+      localStorage.removeItem('user');
+      localStorage.removeItem('isLoggedIn');
+      localStorage.removeItem('token');
+
+      set({
+        isLoggedIn: false,
+        user: null,
+        token: null,
+      });
     }
   },
 }));

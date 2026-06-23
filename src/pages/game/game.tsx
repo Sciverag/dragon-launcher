@@ -6,23 +6,40 @@ import {
   useState,
   type KeyboardEvent,
 } from "react";
+import { createPortal } from "react-dom";
 import { useParams, useNavigate } from "react-router-dom";
-import type { game_detail } from "../../types/game";
+import type {
+  game_detail,
+  SteamPlayerAchievementsResponse,
+} from "../../types/game";
 import axios from "axios";
 import "./game.css";
 import { useLibraryStore } from "../../stores/libraryStore";
+import { useAuthStore } from "../../stores/authStore";
 import VideoPlayer from "../../components/video_player";
 import { ThemeContext } from "../../userContext";
+import Achievements from "../../components/Achievements";
+import {
+  getGameAssets,
+  getSteamPlayerAchievements,
+} from "../../services/gameService";
 
 function Game() {
-  const { background, logo } = useContext(ThemeContext);
+  const { logo, background } = useContext(ThemeContext) as {
+    logo: string;
+    background: string;
+  };
   const { gameId, gamePlatform } = useParams();
   const orientation = useLibraryStore((state) => state.orientation);
+  const token = useAuthStore((state) => state.token);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [game, setGame] = useState<game_detail | null>(null);
-  const [playerAchievements, setPlayerAchievements] = useState<number>(10);
+  const [playerAchievements, setPlayerAchievements] = useState<number>(0);
+  const [playerAchievementData, setPlayerAchievementData] =
+    useState<SteamPlayerAchievementsResponse | null>(null);
   const [dominantColor, setDominantColor] = useState<string>("#8B4513");
   const [logoHasError, setLogoHasError] = useState<boolean>(false);
+  const [showAchievements, setShowAchievements] = useState<boolean>(false);
   const hasInitialized = useRef(false);
   const navigate = useNavigate();
 
@@ -33,6 +50,12 @@ function Game() {
   const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
     if (event.key === "Escape") {
       event.preventDefault();
+      if (showAchievements) {
+        setShowAchievements(false);
+        playShowTrophyReverseAnimations();
+        containerRef.current?.focus();
+        return;
+      }
       handleNavigationChange();
     }
   };
@@ -49,6 +72,44 @@ function Game() {
     }
   };
 
+  const playShowTrophyAnimations = () => {
+    playTransitionAnimations();
+    const name_game = document.querySelector(".name-game-detail");
+    if (name_game) {
+      name_game.classList.add("to-trophy");
+      name_game.classList.remove("reverse-animation");
+    }
+    const logo_game = document.querySelector(".logo-game-detail");
+    if (logo_game) {
+      logo_game.classList.add("to-trophy");
+      logo_game.classList.remove("reverse-animation");
+    }
+    const achievements = document.querySelector(".achievprogr-container");
+    if (achievements) {
+      achievements.classList.remove("reverse-animation");
+      achievements.classList.add("cancel-animation");
+    }
+  };
+
+  const playShowTrophyReverseAnimations = () => {
+    playReverseTransitionAnimations();
+    const name_game = document.querySelector(".name-game-detail");
+    if (name_game) {
+      name_game.classList.add("to-trophy");
+      name_game.classList.add("reverse-animation");
+    }
+    const logo_game = document.querySelector(".logo-game-detail");
+    if (logo_game) {
+      logo_game.classList.add("to-trophy");
+      logo_game.classList.add("reverse-animation");
+    }
+    const achievements = document.querySelector(".achievprogr-container");
+    if (achievements) {
+      achievements.classList.remove("reverse-animation");
+      achievements.classList.add("cancel-animation");
+    }
+  };
+
   const playTransitionAnimations = () => {
     const game_container = document.querySelector(".game-container");
     if (game_container) {
@@ -61,10 +122,12 @@ function Game() {
     const name_game = document.querySelector(".name-game-detail");
     if (name_game) {
       name_game.classList.add("reverse-animation");
+      name_game.classList.remove("to-trophy");
     }
     const logo_game = document.querySelector(".logo-game-detail");
     if (logo_game) {
       logo_game.classList.add("reverse-animation");
+      logo_game.classList.remove("to-trophy");
     }
     const secondaryInfo = document.querySelector(".secondary-info-container");
     if (secondaryInfo) {
@@ -88,6 +151,45 @@ function Game() {
     }
   };
 
+  const playReverseTransitionAnimations = () => {
+    const game_container = document.querySelector(".game-container");
+    if (game_container) {
+      game_container.classList.remove("reverse-animation");
+      game_container.classList.add("hidden");
+      setTimeout(() => {
+        game_container.classList.remove("hidden");
+      }, 1);
+    }
+    const name_game = document.querySelector(".name-game-detail");
+    if (name_game) {
+      name_game.classList.remove("reverse-animation");
+    }
+    const logo_game = document.querySelector(".logo-game-detail");
+    if (logo_game) {
+      logo_game.classList.remove("reverse-animation");
+    }
+    const secondaryInfo = document.querySelector(".secondary-info-container");
+    if (secondaryInfo) {
+      secondaryInfo.classList.remove("reverse-animation");
+    }
+    const gameButtons = document.querySelector(".game-buttons-container");
+    if (gameButtons) {
+      gameButtons.classList.remove("reverse-animation");
+    }
+    const description = document.querySelector(".description-container");
+    if (description) {
+      description.classList.remove("reverse-animation");
+    }
+    const achievements = document.querySelector(".achievprogr-container");
+    if (achievements) {
+      achievements.classList.remove("reverse-animation");
+    }
+    const videoContainer = document.querySelector(".video-container");
+    if (videoContainer) {
+      videoContainer.classList.remove("reverse-animation");
+    }
+  };
+
   const handlePlayPressed = () => {
     playPlayPressedAnimations();
     setTimeout(() => {
@@ -96,10 +198,22 @@ function Game() {
   };
 
   const handleNavigationChange = () => {
+    if (showAchievements) {
+      setShowAchievements(false);
+      return;
+    }
     playTransitionAnimations();
     setTimeout(() => {
       navigate("/library", { state: { fromGame: true, gameId: gameId } });
     }, 1000);
+  };
+
+  const handleShowThrophy = () => {
+    playShowTrophyAnimations();
+    setTimeout(() => {
+      setShowAchievements(true);
+      containerRef.current?.focus();
+    }, 100);
   };
 
   const ensureMinimumBrightness = useCallback(
@@ -217,7 +331,6 @@ function Game() {
       if (!url) return;
 
       const response = await axios.get(url);
-      console.log(response);
       const gameData = response.data[gameId as string].data;
 
       const firstMovie = gameData.movies?.[0];
@@ -227,10 +340,21 @@ function Game() {
         firstMovie?.dash_av1 ??
         "";
 
+      let resolvedBackground = background;
+
+      if (!resolvedBackground && gameId && gamePlatform) {
+        try {
+          const assets = await getGameAssets(gameId, gamePlatform);
+          resolvedBackground = assets.background ?? "";
+        } catch {
+          resolvedBackground = "";
+        }
+      }
+
       const gameDetails = {
         id: gameData.steam_appid as string,
         name: gameData.name as string,
-        background: `https://cdn.akamai.steamstatic.com/steam/apps/${gameId}/library_hero.jpg`,
+        background: resolvedBackground,
         description: gameData.detailed_description,
         developer: gameData.developers?.join(", ") || "",
         release: gameData.release_date.date,
@@ -240,25 +364,53 @@ function Game() {
         achievements: gameData.achievements,
       };
       setGame(gameDetails);
-      extractDominantColor(background);
+
+      if (gameDetails.background) {
+        extractDominantColor(gameDetails.background);
+      }
+
+      if (
+        gamePlatform === "Steam" &&
+        token &&
+        gameId &&
+        gameDetails.achievements
+      ) {
+        try {
+          const playerStats = await getSteamPlayerAchievements(gameId, token);
+          setPlayerAchievementData(playerStats);
+          setPlayerAchievements(playerStats.unlockedCount);
+        } catch (error) {
+          console.error("Failed to fetch player achievements:", error);
+          setPlayerAchievementData(null);
+          setPlayerAchievements(0);
+        }
+      }
     } catch (error) {
       console.error("Failed to fetch game details:", error);
     }
-  }, [gameId, gamePlatform, extractDominantColor]);
+  }, [background, gameId, gamePlatform, extractDominantColor, token]);
 
   useEffect(() => {
     if (hasInitialized.current) return;
     hasInitialized.current = true;
 
     fetchGameDetails();
-  }, [gameId, gamePlatform]);
+  }, [fetchGameDetails]);
 
-  const achievementPercent = game?.achievements?.total
-    ? Math.min(
-        100,
-        Math.round((playerAchievements / game.achievements.total) * 100),
-      )
+  const totalAchievements =
+    playerAchievementData?.totalCount ?? game?.achievements?.total ?? 0;
+
+  const achievementPercent = totalAchievements
+    ? Math.min(100, Math.round((playerAchievements / totalAchievements) * 100))
     : 0;
+
+  const playerAchievementQuality = (() => {
+    if (achievementPercent <= 0) return "neutral";
+    if (achievementPercent <= 40) return "bronce";
+    if (achievementPercent <= 80) return "plata";
+    if (achievementPercent < 100) return "oro";
+    return "platino";
+  })();
 
   return (
     <main
@@ -293,9 +445,11 @@ function Game() {
           <button onClick={handlePlayPressed} className="button">
             Jugar
           </button>
-          <button className="button">
-            <span className="material-symbols-outlined">trophy</span>
-          </button>
+          {game?.achievements && (
+            <button onClick={handleShowThrophy} className="button">
+              <span className="material-symbols-outlined">trophy</span>
+            </button>
+          )}
           <button className="button">
             <span className="material-symbols-outlined">image</span>
           </button>
@@ -305,23 +459,27 @@ function Game() {
         </section>
         <div
           className="description-container"
-          dangerouslySetInnerHTML={{ __html: game?.description }}
+          dangerouslySetInnerHTML={{ __html: game?.description ?? "" }}
         ></div>
       </section>
       <section className="miscelania-container">
         {game?.achievements && (
           <div className="achievprogr-container">
             <div className="achievement-info">
-              <span className="material-symbols-outlined">trophy</span>
+              <span
+                className={`material-symbols-outlined achievement-info__trophy achievement-info__trophy--${playerAchievementQuality}`}
+              >
+                trophy
+              </span>
               <p className="achievement-count">
-                {playerAchievements} / {game?.achievements?.total}
+                {playerAchievements} / {totalAchievements}
               </p>
             </div>
             <div
               className="progress-bar"
               role="progressbar"
               aria-valuenow={playerAchievements}
-              aria-valuemax={game?.achievements?.total ?? 0}
+              aria-valuemax={totalAchievements}
               aria-valuetext={`${achievementPercent}% completado`}
             >
               <div
@@ -343,6 +501,13 @@ function Game() {
           />
         )}
       </section>
+      {showAchievements &&
+        createPortal(
+          <Achievements
+            achievements={playerAchievementData?.achievements ?? []}
+          />,
+          document.body,
+        )}
     </main>
   );
 }

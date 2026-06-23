@@ -144,6 +144,11 @@ body {
     scale: 1.05;
 }
 
+.button:active {
+    scale: 1;
+    background-color: #4f4f4f91;
+}
+
 .button:hover::after,
 .glass:hover::after,
 .glass.selected::after {

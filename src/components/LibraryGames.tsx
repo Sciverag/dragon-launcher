@@ -1,6 +1,7 @@
 import {
   useContext,
   useEffect,
+  useMemo,
   useRef,
   useState,
   type KeyboardEvent,
@@ -22,8 +23,14 @@ export default function LibraryGames({
   searchQuery,
   games,
 }: LibraryGamesProps) {
-  const { logo } = useContext(ThemeContext);
+  const location = useLocation();
+  const { logo } = useContext(ThemeContext) as {
+    logo: string;
+  };
   const [selectedIndexState, setSelectedIndexState] = useState(0);
+  const [selectedGameId, setSelectedGameId] = useState<string | number | null>(
+    null,
+  );
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [hasInitialized, setHasInitialized] = useState<boolean>(false);
   const [logoHasError, setLogoHasError] = useState<boolean>(false);
@@ -32,13 +39,15 @@ export default function LibraryGames({
   const [changeIconOnce, setChangeIconOnce] = useState<number>(0);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const gamesListRef = useRef<HTMLUListElement | null>(null);
-  const itemRefs = useRef<Array<HTMLLIElement | null>>([]);
   const navigate = useNavigate();
-  const location = useLocation();
   const [cancelAnimation, setCancelAnimation] = useState(
     (location.state as { fromGame?: boolean })?.fromGame ?? false,
   );
   const lastSelId = (location.state as { gameId?: number })?.gameId ?? null;
+
+  useEffect(() => {
+    setSelectedGameId(lastSelId);
+  }, [lastSelId]);
   useEffect(() => {
     if (cancelAnimation) {
       setTimeout(() => {
@@ -50,6 +59,33 @@ export default function LibraryGames({
   const filteredGames = games.filter((game) =>
     game.name.toLowerCase().includes(searchQuery.toLowerCase()),
   );
+
+  const loadOrder = useMemo(() => {
+    const orderedIndexes = filteredGames.map((_, index) => index);
+
+    const priorityIndex = filteredGames.findIndex(
+      (game) => game.id == lastSelId,
+    );
+
+    if (priorityIndex > 0) {
+      orderedIndexes.splice(priorityIndex, 1);
+      orderedIndexes.unshift(priorityIndex);
+    }
+
+    return orderedIndexes;
+  }, [filteredGames, lastSelId]);
+
+  const loadRankByIndex = useMemo(() => {
+    const rankMap = new Map<number, number>();
+
+    loadOrder.forEach((index, rank) => {
+      rankMap.set(index, rank);
+    });
+
+    return rankMap;
+  }, [loadOrder]);
+
+  const [loadStep, setLoadStep] = useState(0);
 
   const handleSelectedChange = () => {
     setLogoHasError(false);
@@ -158,28 +194,44 @@ export default function LibraryGames({
   };
 
   const handleGamePageNav = (clickedIndex: number) => {
+    const targetGame = filteredGames[clickedIndex];
+
+    if (!targetGame) {
+      return;
+    }
+
     setSelectedIndexState(clickedIndex);
+    setSelectedGameId(targetGame.id);
     playTransitionAnimations();
     setTimeout(() => {
-      navigate(
-        `/game/${filteredGames[activeIndex].id}/${filteredGames[activeIndex].platform}`,
-      );
+      navigate(`/game/${targetGame.id}/${targetGame.platform}`);
     }, 1000);
   };
 
   const selectLeftGame = () => {
-    setSelectedIndexState((current) => Math.max(current - 1, 0));
+    setSelectedIndexState((current) => {
+      const nextIndex = Math.max(current - 1, 0);
+      setSelectedGameId(filteredGames[nextIndex]?.id ?? null);
+      return nextIndex;
+    });
   };
 
   const selectRightGame = () => {
-    setSelectedIndexState((current) =>
-      Math.min(current + 1, filteredGames.length - 1),
-    );
+    setSelectedIndexState((current) => {
+      const nextIndex = Math.min(current + 1, filteredGames.length - 1);
+      setSelectedGameId(filteredGames[nextIndex]?.id ?? null);
+      return nextIndex;
+    });
   };
 
+  const selectedIndexFromId = filteredGames.findIndex(
+    (game) => String(game.id) === String(selectedGameId),
+  );
   const selectedIndex =
     filteredGames.length > 0
-      ? Math.min(selectedIndexState, filteredGames.length - 1)
+      ? selectedIndexFromId !== -1
+        ? selectedIndexFromId
+        : Math.min(selectedIndexState, filteredGames.length - 1)
       : 0;
   const normalizedHoveredIndex =
     hoveredIndex !== null && hoveredIndex < filteredGames.length
@@ -200,6 +252,32 @@ export default function LibraryGames({
         : selectedIndex;
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setLoadStep(0);
+  }, [loadOrder.length, searchQuery]);
+
+  useEffect(() => {
+    if (filteredGames.length <= 1 || loadStep >= filteredGames.length - 1) {
+      return;
+    }
+
+    const intervalId = window.setInterval(() => {
+      setLoadStep((current) => {
+        if (current >= filteredGames.length - 1) {
+          window.clearInterval(intervalId);
+          return current;
+        }
+
+        return current + 1;
+      });
+    }, 120);
+
+    return () => {
+      window.clearInterval(intervalId);
+    };
+  }, [filteredGames.length, loadStep]);
+
+  useEffect(() => {
     if (
       lastSelectedIndex !== -1 &&
       filteredGames.length !== 0 &&
@@ -207,6 +285,7 @@ export default function LibraryGames({
     ) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setSelectedIndexState(lastSelectedIndex);
+      setSelectedGameId(filteredGames[lastSelectedIndex]?.id ?? lastSelId);
       setChangeBackgroundOnce(1);
       setChangeLogoOnce(1);
       setChangeIconOnce(1);
@@ -238,13 +317,28 @@ export default function LibraryGames({
   }, [activeIndex]);
 
   useEffect(() => {
+    // A newly loaded logo should always get a fresh render attempt.
+    if (logo) {
+      setLogoHasError(false);
+    }
+  }, [logo]);
+
+  useEffect(() => {
+    containerRef.current?.focus();
     handleOrientationChange();
   }, [libraryOrientation]);
 
   useEffect(() => {
-    const selectedItem = itemRefs.current[selectedIndex];
     const list = gamesListRef.current;
-    if (!selectedItem || !list) {
+    if (!list) {
+      return;
+    }
+
+    const selectedItem = list.querySelector(
+      `[data-index=\"${selectedIndex}\"]`,
+    ) as HTMLLIElement | null;
+
+    if (!selectedItem) {
       return;
     }
 
@@ -279,7 +373,7 @@ export default function LibraryGames({
 
     if (event.key === "Enter") {
       event.preventDefault();
-      handleGamePageNav(selectedIndexState);
+      handleGamePageNav(selectedIndex);
     }
   };
 
@@ -317,7 +411,7 @@ export default function LibraryGames({
           )}
           {filteredGames[activeIndex] && (
             <button onClick={handlePlay} className="button game-button">
-              Jugar
+              {filteredGames[activeIndex].isLocal ? "Jugar" : "Instalar"}
             </button>
           )}
           <div className="scrollbutton-container">
@@ -331,7 +425,8 @@ export default function LibraryGames({
           <ul ref={gamesListRef} className={`games-list ${libraryOrientation}`}>
             {filteredGames.map((game, index) => (
               <LibraryCard
-                key={index}
+                key={`${game.id}-${game.platform}`}
+                aria-label={game.name}
                 game={game}
                 index={index}
                 libraryOrientation={libraryOrientation}
@@ -340,13 +435,18 @@ export default function LibraryGames({
                 changeLogoOnce={changeLogoOnce}
                 changeIconOnce={changeIconOnce}
                 activeIndex={activeIndex}
-                itemRefs={itemRefs}
                 handleGamePageNav={handleGamePageNav}
                 setHoveredIndex={setHoveredIndex}
                 setSelectedIndexState={setSelectedIndexState}
+                setSelectedGameId={setSelectedGameId}
                 setChangeBackgroundOnce={setChangeBackgroundOnce}
                 setChangeLogoOnce={setChangeLogoOnce}
                 setChangeIconOnce={setChangeIconOnce}
+                shouldLoadAssets={
+                  activeIndex === index ||
+                  (loadRankByIndex.get(index) ?? Number.MAX_SAFE_INTEGER) <=
+                    loadStep
+                }
               />
             ))}
           </ul>

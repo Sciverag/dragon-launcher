@@ -1,92 +1,63 @@
 import { invoke } from "@tauri-apps/api/core";
+import axios from "axios";
 import type { game } from "../types/game";
+import { useAuthStore } from "../stores/authStore";
 
 export async function getSteamLocalLibrary() {
-    const localGames = invoke<game[]>("get_steam_library");
-    (await localGames).forEach((game) => {
-        game.platform = "Steam"
-    })
-    return localGames;
+    const localGames = await invoke<game[]>("get_steam_library");
+
+    return localGames.map<game>((entry) => ({
+        ...entry,
+        platform: "Steam" as const,
+        isLocal: true,
+    }));
 }
 
 export async function getSteamLibrary() {
-    const games: game[] = [
-        {
-            id: 3784760,
-            name: "Elfie: A Sand Plan",
-            platform: "Steam",
-        },
-        {
-            id: 2375550,
-            name: "Like a Dragon: Gaiden - The Man Who Erased His Name",
-            platform: "Steam",
-        },
-        {
-            id: 1659420,
-            name: "Uncharted: Legacy of Thieves Collection",
-            platform: "Steam",
-        },
-        {
-            id: 1895880,
-            name: "Ratchet and Clank - Rift Apart",
-            platform: "Steam",
-        },
-        {
-            id: 1922560,
-            name: "Plant's vs Zombies Garden Warfare 2",
-            platform: "Steam",
-        },
-        {
-            id: 504230,
-            name: "Celeste",
-            platform: "Steam",
-        },
-        {
-            id: 1113000,
-            name: "Persona 4 Golden",
-            platform: "Steam",
-        },
-        {
-            id: 314810,
-            name: "Randal's Monday",
-            platform: "Steam",
-        },
-        {
-            id: 3241660,
-            name: "R.E.P.O",
-            platform: "Steam",
-        },
-        {
-            id: 250900,
-            name: "The Binding of Isaac Rebirth",
-            platform: "Steam",
-        },
-        {
-            id: 1903340,
-            name: "Expedition 33",
-            platform: "Steam",
-        },
-        {
-            id: 460790,
-            name: "Bayoneta",
-            platform: "Steam",
-        },
-        {
-            id: 2679460,
-            name: "Metaphor ReFantazio",
-            platform: "Steam",
-        },
-        {
-            id: 1145360,
-            name: "Hades",
-            platform: "Steam",
-        },
-        {
-            id: 1426210,
-            name: "It Takes Two",
-            platform: "Steam",
-        },
-    ];
+    const { token } = useAuthStore.getState();
 
-    return games
+    if (!token) {
+        throw new Error("Debes iniciar sesion para obtener la libreria de Steam");
+    }
+
+    const response = await axios.get<game[]>("http://localhost:4500/assets/steam/library", {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+
+    return response.data.map<game>((entry) => ({
+        ...entry,
+        platform: "Steam" as const,
+        isLocal: false,
+    }));
+}
+
+export async function mergeLibraries(localGames: game[], remoteGames: game[]) {
+    const mergedGames: game[] = [];
+
+    const remoteGamesMap = new Map(remoteGames.map((game) => [game.id, game]));
+
+    for (const localGame of localGames) {
+        const remoteGame = remoteGamesMap.get(localGame.id);
+
+        if (remoteGame) {
+            mergedGames.push({
+                ...localGame,
+                ...remoteGame,
+                isLocal: true,
+            });
+        }
+
+        else {
+            mergedGames.push(localGame);
+        }
+    }
+
+    for (const remoteGame of remoteGames) {
+        if (!localGames.some((game) => game.id === remoteGame.id)) {
+            mergedGames.push(remoteGame);
+        }
+    }
+    return mergedGames.sort((a, b) => b.last_played - a.last_played);
 }

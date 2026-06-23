@@ -36,7 +36,7 @@ export default function Playing() {
     }
 
     setTimeout(() => {
-      naviagte("/library", { state: { gameId: gameId } });
+      naviagte("/library", { state: { fromPlaying: true, gameId: gameId } });
     }, 1000);
   };
 
