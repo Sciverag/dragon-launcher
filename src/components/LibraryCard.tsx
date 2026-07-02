@@ -63,7 +63,6 @@ export default function LibraryCard({
 }: LibraryCardProps) {
   const [hasInitialized, setHasInitialized] = useState<boolean>(false);
   const [hasLoadedDetails, setHasLoadedDetails] = useState<boolean>(false);
-  const [isInViewport, setIsInViewport] = useState<boolean>(false);
   const [coverPath, setCoverPath] = useState<string>(game.cover as string);
   const [iconPath, setIconPath] = useState<string>(game.icon as string);
   const [backgroundPath, setBackgroundPath] = useState<string>(
@@ -244,7 +243,6 @@ export default function LibraryCard({
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0]?.isIntersecting) {
-          setIsInViewport(true);
           observer.disconnect();
         }
       },

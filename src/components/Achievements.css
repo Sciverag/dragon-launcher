@@ -10,6 +10,7 @@
     align-items: flex-start;
     padding: 2rem;
     overflow: hidden;
+    margin-top: 1rem;
 }
 
 .achievements-background {
@@ -30,6 +31,63 @@
     overflow-y: auto;
     overflow-x: hidden;
     z-index: 30;
+}
+
+.achievement-title-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin: 0 1rem 1rem;
+    padding: 1rem 1.1rem;
+    border-radius: 16px;
+    background: rgba(10, 13, 20, 0.82);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    backdrop-filter: blur(8px);
+}
+
+.achievement-title-card__content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.achievement-title-card__label {
+    margin: 0;
+    color: #b7c4d2;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+}
+
+.achievement-title-card__title {
+    margin: 0;
+    color: #f6f8fb;
+    font-size: 1.15rem;
+}
+
+.achievement-title-card__copy {
+    margin: 0;
+    color: #cfd8e3;
+    font-size: 0.92rem;
+}
+
+.achievement-title-card__button {
+    border: none;
+    border-radius: 999px;
+    padding: 0.7rem 1rem;
+    background: linear-gradient(90deg, #75b8ff, #a477ff);
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.achievement-title-card__pill {
+    padding: 0.55rem 0.8rem;
+    border-radius: 999px;
+    background: rgba(133, 255, 180, 0.15);
+    color: #8ff5b0;
+    font-size: 0.9rem;
 }
 
 .achievements-list__items {
@@ -69,10 +127,16 @@
     width: 72px;
     height: 72px;
     object-fit: cover;
+    animation: cover-loading 0.5s ease-in-out infinite alternate;
 }
 
 .achievement-item__icon--hidden {
     filter: brightness(0.4) blur(1px);
+    opacity: 0.6;
+}
+
+.achievement-item__icon--locked {
+    filter: grayscale(1);
     opacity: 0.6;
 }
 
@@ -172,6 +236,11 @@
     }
 
     .achievement-item__head {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .achievement-title-card {
         flex-direction: column;
         align-items: flex-start;
     }

@@ -17,11 +17,13 @@ body {
 ::-webkit-scrollbar-thumb {
     background: #00000085;
     border-radius: 10px;
-    transition: all 0.2s ease-in-out;
+    box-shadow: inset 0 0 0 2px #ffffff78;
+    transition: background 0.2s ease-in-out;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: #262626aa;
+    background: #828282aa;
+    pointer-events: auto;
 }
 
 

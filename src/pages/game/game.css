@@ -231,7 +231,34 @@
     background-position: center;
     border-radius: 999px;
     transition: width 0.25s ease;
+    overflow: hidden;
     animation: wave-edge 2s ease-in-out infinite;
+}
+
+.progress-bar__fill::after {
+    display: block;
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 75%;
+    height: 100%;
+    transform: translateX(-200%);
+    opacity: 0.3;
+    mix-blend-mode: color-dodge;
+    background: linear-gradient(to right, transparent, rgba(130, 130, 130, 0.47), transparent);
+    animation: left-to-right 2s linear infinite;
+    animation-delay: 1s;
+}
+
+@keyframes left-to-right {
+    0% {
+        transform: translateX(-200%);
+    }
+
+    100% {
+        transform: translateX(200%);
+    }
 }
 
 @keyframes wave-edge {
@@ -239,12 +266,10 @@
     0%,
     100% {
         transform: scale(1);
-        border-radius: 5px;
     }
 
     50% {
         transform: scale(1.05);
-        border-radius: 10px;
     }
 }
 

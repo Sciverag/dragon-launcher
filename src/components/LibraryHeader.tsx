@@ -20,6 +20,8 @@ export const LibraryHeader = ({
   const avatar = useAuthStore((state) => state.user?.avatar);
   const navigate = useNavigate();
   const [searchOpen, setSearchOpen] = useState(false);
+  const [filterOpen, setFilterOpen] = useState(false);
+  const [sortOpen, setSortOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -145,7 +147,7 @@ export const LibraryHeader = ({
 
       <div hidden={!searchOpen} className="search-container">
         <div className="form-group">
-          <label htmlFor="text">
+          <label htmlFor="searchQuery">
             {" "}
             <span className="material-symbols-outlined">search</span>
           </label>
@@ -155,7 +157,27 @@ export const LibraryHeader = ({
             value={searchQuery}
             onChange={handleSearchChange}
           />
+          <button
+            title="Filtrar"
+            className="filter-button"
+            onClick={() => setFilterOpen(!filterOpen)}
+          >
+            <span className="material-symbols-outlined">filter_list</span>
+          </button>
+          <button
+            title="Ordenar"
+            className="filter-button"
+            onClick={() => setSortOpen(!sortOpen)}
+          >
+            <span className="material-symbols-outlined">sort</span>
+          </button>
         </div>
+      </div>
+
+      <div hidden={!searchOpen} className="sort-filter-container">
+        <div hidden={!filterOpen} className="filter-container"></div>
+
+        <div hidden={!sortOpen} className="sort-container"></div>
       </div>
 
       <button

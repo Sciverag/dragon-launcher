@@ -8,6 +8,7 @@ export type game = {
     background?: string;
     platform: "Steam" | "Epic" | "Custom";
     last_played: number;
+    played_minutes?: number;
     isLocal?: boolean;
 };
 

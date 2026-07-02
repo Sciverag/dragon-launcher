@@ -19,10 +19,14 @@ function Library() {
   const hasLoadedGames = useLibraryStore((state) => state.hasLoadedGames);
   const setGames = useLibraryStore((state) => state.setGames);
   const user = useAuthStore((state) => state.user);
+  const currentSteamId = user?.steamId ?? null;
   const [searchQuery, setSearchQuery] = useState("");
   const fromPlaying =
     (location.state as { fromPlaying?: boolean })?.fromPlaying ?? false;
-  const shouldReloadLibrary = !hasLoadedGames || fromPlaying;
+  const shouldReloadLibrary =
+    !hasLoadedGames ||
+    fromPlaying ||
+    (currentSteamId !== null && games.length === 0);
   const [loading, setLoading] = useState<boolean>(shouldReloadLibrary);
   const [showRipples, setShowRipples] = useState(
     (location.state as { fromHome?: boolean })?.fromHome ?? false,
@@ -62,7 +66,7 @@ function Library() {
       }
 
       if (!user?.steamId) {
-        setGames(localGames);
+        setGames(localGames.sort((a, b) => b.last_played - a.last_played));
         setLoading(false);
         return;
       }
@@ -78,7 +82,7 @@ function Library() {
         const mergedGames = await mergeLibraries(localGames, remoteGames);
         setGames(mergedGames);
       } catch {
-        setGames(localGames);
+        setGames(localGames.sort((a, b) => b.last_played - a.last_played));
       } finally {
         setLoading(false);
       }
@@ -90,7 +94,7 @@ function Library() {
       cancelled = true;
       setLoading(false);
     };
-  }, [setGames, shouldReloadLibrary, user?.steamId]);
+  }, [setGames, shouldReloadLibrary, currentSteamId]);
 
   return (
     <div className="library-container">

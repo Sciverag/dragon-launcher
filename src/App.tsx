@@ -11,10 +11,14 @@ import Profile from "./pages/profile/profile";
 
 function App() {
   const checkAuth = useAuthStore((state) => state.checkAuth);
+  const recalculateUserLevelFromAchievements = useAuthStore(
+    (state) => state.recalculateUserLevelFromAchievements,
+  );
 
   useEffect(() => {
     checkAuth();
-  }, [checkAuth]);
+    recalculateUserLevelFromAchievements();
+  }, [checkAuth, recalculateUserLevelFromAchievements]);
 
   return (
     <Routes>

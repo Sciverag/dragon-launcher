@@ -11,6 +11,7 @@
     height: 15vh;
     position: relative;
     display: flex;
+    align-items: center;
 }
 
 .avatar {
@@ -25,6 +26,7 @@
 .name-title-container {
     margin-left: calc(6rem + 250px);
     margin-top: 1.5rem;
+    margin-bottom: auto;
     height: fit-content;
 }
 
@@ -41,13 +43,96 @@
     color: rgb(179, 179, 179);
 }
 
+.level-progress-container {
+    margin-left: auto;
+    margin-right: 4rem;
+    width: 25%;
+    height: 1.2rem;
+    border-radius: 999px;
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.level-progress-container:hover .level-progress-xp {
+    opacity: 1;
+}
+
+.level-progress-xp {
+    color: rgba(255, 255, 255, 0.771);
+    font-size: 1rem;
+    font-weight: bold;
+    margin-right: 1rem;
+    align-self: center;
+    position: absolute;
+    left: 20%;
+    z-index: 10;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease-in-out;
+}
+
+.level-progress-text {
+    color: white;
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-right: 1rem;
+    align-self: center;
+    width: 30px;
+    height: 30px;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: solid 3px rgba(255, 255, 255, 0.523);
+    border-radius: 999px;
+}
+
+.level-progress-bar {
+    height: 100%;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.level-progress-fill {
+    height: 100%;
+    background: linear-gradient(135deg, rgb(102, 192, 244), rgb(30, 104, 165));
+    border-radius: 999px;
+    overflow: hidden;
+    animation: wave-edge 2s ease-in-out infinite;
+}
+
+.level-progress-fill::after {
+    display: block;
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 75%;
+    height: 100%;
+    transform: translateX(-200%);
+    opacity: 0.3;
+    mix-blend-mode: color-dodge;
+    background: linear-gradient(to right, transparent, rgba(130, 130, 130, 0.47), transparent);
+    animation: left-to-right 2s linear infinite;
+    animation-delay: 1s;
+}
+
 .platform-links-card {
-    width: min(960px, calc(100vw - 4rem));
-    margin: 3rem auto 0;
     padding: 1.5rem;
     border: 1px solid rgba(255, 255, 255, 0.12);
     border-radius: 24px;
     background: linear-gradient(135deg, rgba(11, 18, 32, 0.92), rgba(27, 40, 56, 0.92));
+}
+
+.platform-links-card {
+    width: min(960px, calc(100vw - 4rem));
+    margin: 1.5rem auto 0;
+}
+
+.platform-links-card {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -125,6 +210,10 @@
     .name-title-container {
         margin: 1rem 0 0;
         text-align: center;
+    }
+
+    .profile-stats-card {
+        grid-template-columns: 1fr;
     }
 
     .platform-links-card {

@@ -11,6 +11,7 @@ interface LibraryState {
     hasLoadedGames: boolean;
     setOrientation: (orientation: LibraryOrientation) => void;
     setGames: (games: game[]) => void;
+    resetLibrary: () => void;
 }
 
 const getInitialOrientation = (): LibraryOrientation => {
@@ -35,5 +36,8 @@ export const useLibraryStore = create<LibraryState>((set) => ({
     },
     setGames: (games) => {
         set({ games, hasLoadedGames: true });
+    },
+    resetLibrary: () => {
+        set({ games: [], hasLoadedGames: false });
     },
 }));

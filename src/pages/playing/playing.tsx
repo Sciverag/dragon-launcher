@@ -6,7 +6,7 @@ import { useLibraryStore } from "../../stores/libraryStore";
 
 export default function Playing() {
   const { icon, logo } = useContext(ThemeContext);
-  const { gameId, gameName, gamePlatform } = useParams();
+  const { gameId, gameName } = useParams();
   const orientation = useLibraryStore((state) => state.orientation);
   const naviagte = useNavigate();
   const [hasInitialized, setHasInitialized] = useState<boolean>(false);

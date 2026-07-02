@@ -2,30 +2,67 @@
     position: relative;
     margin: auto 2rem 2rem auto;
     width: 75%;
+    overflow: visible;
+    border-radius: 12px;
+    isolation: isolate;
     animation: left-animation 0.7s ease-in-out;
-    overflow: hidden;
-    border-radius: 5px;
+    padding: 0.35rem;
 }
 
-
+.video-container::before {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    background-image:
+        linear-gradient(135deg, var(--video-accent-soft, rgba(255, 255, 255, 0.18)) 0%, transparent 70%),
+        var(--video-halo-background, none);
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    filter: blur(8px) saturate(0.95) brightness(1.01);
+    opacity: 0.16;
+    pointer-events: none;
+    z-index: 0;
+    transform: scale(1.0);
+}
 
 .game-trailer {
-    margin: auto 2rem 2rem auto;
+    position: relative;
+    z-index: 1;
+    display: block;
     width: 100%;
-    border-radius: 5px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.383);
+    margin: 0;
+    border-radius: inherit;
+    box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.08),
+        0 0 22px rgba(0, 0, 0, 0.55),
+        0 0 90px var(--video-accent-strong, rgba(255, 255, 255, 0.7));
     animation: fade-in-animation 0.7s ease-in-out;
+    transition: box-shadow 0.2s ease-out;
+}
+
+.game-trailer::before {
+    content: "";
+    position: absolute;
+    inset: -12px;
+    border-radius: inherit;
+    background: radial-gradient(circle at 50% 30%, var(--video-accent-soft, rgba(255, 255, 255, 0.9)) 0%, rgba(255, 255, 255, 0.2) 35%, rgba(0, 0, 0, 0) 74%);
+    filter: blur(24px);
+    opacity: 0.95;
+    pointer-events: none;
+    z-index: -1;
 }
 
 .video-controls {
     position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    transform: translateY(-23%);
-    border-radius: 0 0 5px 5px;
+    left: auto;
+    right: auto;
+    bottom: 1%;
+    z-index: 2;
+    width: 98.65%;
+    padding: 2rem 1rem 1rem;
+    border-radius: 0 0 12px 12px;
     background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
-    padding: 2rem 1rem 1rem 1rem;
     opacity: 0;
     transition: opacity 0.3s ease;
 }
@@ -33,7 +70,6 @@
 .video-container:hover .video-controls {
     opacity: 1;
 }
-
 
 .progress-container {
     width: 100%;
@@ -44,11 +80,11 @@
     width: 100%;
     height: 4px;
     appearance: none;
-    background: rgba(255, 255, 255, 0.3);
     border-radius: 2px;
     outline: none;
     cursor: pointer;
     transition: height 0.2s ease;
+    background: linear-gradient(to right, var(--video-accent, #8B4513) 0%, var(--video-accent, #8B4513) 0%, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0.18) 100%);
 }
 
 .progress-slider:hover {
@@ -60,22 +96,20 @@
     width: 12px;
     height: 12px;
     border-radius: 50%;
-    background: white;
+    background: var(--video-accent, white);
     cursor: pointer;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 8px var(--video-accent-strong, rgba(0, 0, 0, 0.5));
 }
-
 
 .progress-slider::-moz-range-thumb {
     width: 12px;
     height: 12px;
     border-radius: 50%;
-    background: white;
+    background: var(--video-accent, white);
     cursor: pointer;
     border: none;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 8px var(--video-accent-strong, rgba(0, 0, 0, 0.5));
 }
-
 
 .controls-bottom {
     display: flex;
@@ -91,20 +125,19 @@
     flex: 1;
 }
 
-
 .control-button {
-    background: rgba(255, 255, 255, 0.2);
-    border: none;
-    color: white;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    padding: 0.5rem;
     min-width: 40px;
     height: 40px;
+    padding: 0.5rem;
+    border: none;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
 }
 
 .control-button:hover {
@@ -120,14 +153,13 @@
     margin-left: auto;
 }
 
-
 .volume-control {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    background: rgba(255, 255, 255, 0.1);
     padding: 0.5rem 0.75rem;
     border-radius: 4px;
+    background: rgba(255, 255, 255, 0.1);
 }
 
 .volume-icon {
@@ -140,10 +172,10 @@
     width: 80px;
     height: 4px;
     appearance: none;
-    background: rgba(255, 255, 255, 0.3);
     border-radius: 2px;
     outline: none;
     cursor: pointer;
+    background: linear-gradient(to right, var(--video-accent, #8B4513) 0%, var(--video-accent, #8B4513) 1%, rgba(255, 255, 255, 0.18) 1%, rgba(255, 255, 255, 0.18) 100%);
 }
 
 .volume-slider::-webkit-slider-thumb {
@@ -151,7 +183,7 @@
     width: 10px;
     height: 10px;
     border-radius: 50%;
-    background: white;
+    background: var(--video-accent, white);
     cursor: pointer;
 }
 
@@ -159,24 +191,26 @@
     width: 10px;
     height: 10px;
     border-radius: 50%;
-    background: white;
+    background: var(--video-accent, white);
     cursor: pointer;
     border: none;
 }
 
-
 .time-display {
+    min-width: 100px;
     color: rgba(255, 255, 255, 0.8);
     font-size: 0.9rem;
     font-weight: 600;
-    min-width: 100px;
     text-align: right;
 }
-
 
 .video-container:fullscreen {
     width: 100vw;
     height: 100vh;
+}
+
+.video-container:fullscreen::before {
+    inset: -48px;
 }
 
 .video-container:fullscreen .game-trailer {

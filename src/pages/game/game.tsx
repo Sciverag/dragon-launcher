@@ -6,7 +6,6 @@ import {
   useState,
   type KeyboardEvent,
 } from "react";
-import { createPortal } from "react-dom";
 import { useParams, useNavigate } from "react-router-dom";
 import type {
   game_detail,
@@ -19,10 +18,17 @@ import { useAuthStore } from "../../stores/authStore";
 import VideoPlayer from "../../components/video_player";
 import { ThemeContext } from "../../userContext";
 import Achievements from "../../components/Achievements";
+import { createPortal } from "react-dom";
 import {
   getGameAssets,
   getSteamPlayerAchievements,
+  hasValidSteamAchievements,
 } from "../../services/gameService";
+import {
+  calculateTotalXpFromStoredAchievements,
+  getLevelProgress,
+  saveAchievementSnapshot,
+} from "../../utils/leveling";
 
 function Game() {
   const { logo, background } = useContext(ThemeContext) as {
@@ -31,7 +37,9 @@ function Game() {
   };
   const { gameId, gamePlatform } = useParams();
   const orientation = useLibraryStore((state) => state.orientation);
+  const libraryGames = useLibraryStore((state) => state.games);
   const token = useAuthStore((state) => state.token);
+  const updateUser = useAuthStore((state) => state.updateUser);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [game, setGame] = useState<game_detail | null>(null);
   const [playerAchievements, setPlayerAchievements] = useState<number>(0);
@@ -40,6 +48,8 @@ function Game() {
   const [dominantColor, setDominantColor] = useState<string>("#8B4513");
   const [logoHasError, setLogoHasError] = useState<boolean>(false);
   const [showAchievements, setShowAchievements] = useState<boolean>(false);
+  const [gameHasReleased, setGameHasReleased] = useState<boolean>(true);
+  const [isInstalled, setIsInstalled] = useState<boolean>(false);
   const hasInitialized = useRef(false);
   const navigate = useNavigate();
 
@@ -78,11 +88,13 @@ function Game() {
     if (name_game) {
       name_game.classList.add("to-trophy");
       name_game.classList.remove("reverse-animation");
+      name_game.classList.remove("grid");
     }
     const logo_game = document.querySelector(".logo-game-detail");
     if (logo_game) {
       logo_game.classList.add("to-trophy");
       logo_game.classList.remove("reverse-animation");
+      logo_game.classList.remove("grid");
     }
     const achievements = document.querySelector(".achievprogr-container");
     if (achievements) {
@@ -123,11 +135,17 @@ function Game() {
     if (name_game) {
       name_game.classList.add("reverse-animation");
       name_game.classList.remove("to-trophy");
+      if (orientation === "grid") {
+        name_game.classList.add("grid");
+      }
     }
     const logo_game = document.querySelector(".logo-game-detail");
     if (logo_game) {
       logo_game.classList.add("reverse-animation");
       logo_game.classList.remove("to-trophy");
+      if (orientation === "grid") {
+        logo_game.classList.add("grid");
+      }
     }
     const secondaryInfo = document.querySelector(".secondary-info-container");
     if (secondaryInfo) {
@@ -310,6 +328,44 @@ function Game() {
     [ensureMinimumBrightness],
   );
 
+  const enlightenColor = useCallback((hex: string, percent: number) => {
+    const num = parseInt(hex.replace("#", ""), 16);
+    const amt = Math.round(2.55 * percent);
+
+    const R = (num >> 16) + amt;
+    const G = ((num >> 8) & 0x00ff) + amt;
+    const B = (num & 0x0000ff) + amt;
+
+    const newR = Math.max(0, Math.min(255, R));
+    const newG = Math.max(0, Math.min(255, G));
+    const newB = Math.max(0, Math.min(255, B));
+
+    return `#${(0x1000000 + (newR << 16) + (newG << 8) + newB)
+      .toString(16)
+      .slice(1)
+      .toUpperCase()}`;
+  }, []);
+
+  const formatPlayedTime = useCallback((minutes?: number) => {
+    if (minutes === undefined || minutes === null) {
+      return "Sin datos";
+    }
+
+    const totalMinutes = Math.max(0, Math.floor(minutes));
+    const hours = Math.floor(totalMinutes / 60);
+    const remainingMinutes = totalMinutes % 60;
+
+    if (hours === 0) {
+      return `${remainingMinutes} min`;
+    }
+
+    if (remainingMinutes === 0) {
+      return `${hours} h`;
+    }
+
+    return `${hours} h ${remainingMinutes} min`;
+  }, []);
+
   const fetchGameDetails = useCallback(async () => {
     try {
       const getUrlForPlatform = (
@@ -340,6 +396,10 @@ function Game() {
         firstMovie?.dash_av1 ??
         "";
 
+      const selectedGame = libraryGames.find(
+        (entry) => String(entry.id) === String(gameId),
+      );
+
       let resolvedBackground = background;
 
       if (!resolvedBackground && gameId && gamePlatform) {
@@ -351,6 +411,11 @@ function Game() {
         }
       }
 
+      console.log(gameData);
+
+      setGameHasReleased(gameData.release_date.coming_soon === false);
+      setIsInstalled(selectedGame?.isLocal ?? false);
+
       const gameDetails = {
         id: gameData.steam_appid as string,
         name: gameData.name as string,
@@ -358,7 +423,7 @@ function Game() {
         description: gameData.detailed_description,
         developer: gameData.developers?.join(", ") || "",
         release: gameData.release_date.date,
-        played_time: "12h",
+        played_time: formatPlayedTime(selectedGame?.played_minutes),
         trailer: trailerUrl,
         trailerPoster: firstMovie?.thumbnail || "",
         achievements: gameData.achievements,
@@ -369,16 +434,30 @@ function Game() {
         extractDominantColor(gameDetails.background);
       }
 
-      if (
-        gamePlatform === "Steam" &&
-        token &&
-        gameId &&
-        gameDetails.achievements
-      ) {
+      const hasValidAchievements = hasValidSteamAchievements(
+        gameDetails.achievements,
+      );
+
+      if (gamePlatform === "Steam" && token && gameId && hasValidAchievements) {
         try {
           const playerStats = await getSteamPlayerAchievements(gameId, token);
           setPlayerAchievementData(playerStats);
           setPlayerAchievements(playerStats.unlockedCount);
+
+          const normalizedGameId = gameId ? String(gameId) : null;
+          if (normalizedGameId && typeof window !== "undefined") {
+            try {
+              saveAchievementSnapshot(
+                normalizedGameId,
+                playerStats.achievements,
+              );
+              const nextXp = calculateTotalXpFromStoredAchievements();
+              const nextLevelProgress = getLevelProgress(nextXp);
+              updateUser({ xp: nextXp, level: nextLevelProgress.level });
+            } catch (storageError) {
+              console.error("Failed to persist achievement XP:", storageError);
+            }
+          }
         } catch (error) {
           console.error("Failed to fetch player achievements:", error);
           setPlayerAchievementData(null);
@@ -388,7 +467,16 @@ function Game() {
     } catch (error) {
       console.error("Failed to fetch game details:", error);
     }
-  }, [background, gameId, gamePlatform, extractDominantColor, token]);
+  }, [
+    background,
+    formatPlayedTime,
+    gameId,
+    gamePlatform,
+    extractDominantColor,
+    libraryGames,
+    token,
+    updateUser,
+  ]);
 
   useEffect(() => {
     if (hasInitialized.current) return;
@@ -396,6 +484,8 @@ function Game() {
 
     fetchGameDetails();
   }, [fetchGameDetails]);
+
+  const hasValidAchievements = hasValidSteamAchievements(game?.achievements);
 
   const totalAchievements =
     playerAchievementData?.totalCount ?? game?.achievements?.total ?? 0;
@@ -442,10 +532,12 @@ function Game() {
           </div>
         </section>
         <section className="game-buttons-container">
-          <button onClick={handlePlayPressed} className="button">
-            Jugar
-          </button>
-          {game?.achievements && (
+          {gameHasReleased && (
+            <button onClick={handlePlayPressed} className="button">
+              {isInstalled ? <>Jugar</> : <>Instalar</>}
+            </button>
+          )}
+          {hasValidAchievements && (
             <button onClick={handleShowThrophy} className="button">
               <span className="material-symbols-outlined">trophy</span>
             </button>
@@ -463,7 +555,7 @@ function Game() {
         ></div>
       </section>
       <section className="miscelania-container">
-        {game?.achievements && (
+        {hasValidAchievements && (
           <div className="achievprogr-container">
             <div className="achievement-info">
               <span
@@ -486,7 +578,7 @@ function Game() {
                 className="progress-bar__fill"
                 style={{
                   width: `${achievementPercent}%`,
-                  backgroundColor: dominantColor,
+                  background: `linear-gradient(to right, ${enlightenColor(dominantColor, 20)}, ${dominantColor})`,
                 }}
               />
             </div>
@@ -498,6 +590,7 @@ function Game() {
             videoUrl={game.trailer}
             videoPoster={game.trailerPoster}
             gameBackground={game.background}
+            accentColor={dominantColor}
           />
         )}
       </section>
@@ -505,6 +598,8 @@ function Game() {
         createPortal(
           <Achievements
             achievements={playerAchievementData?.achievements ?? []}
+            gameId={gameId}
+            gameName={game?.name}
           />,
           document.body,
         )}

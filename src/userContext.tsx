@@ -1,8 +1,32 @@
-import { createContext, useState } from "react";
+import { createContext, useState, type ReactNode } from "react";
 
-export const ThemeContext = createContext();
+type ThemeContextValue = {
+  background: string;
+  logo: string;
+  icon: string;
+  cancelAnimation: boolean;
+  setCancelAnimation: (value: boolean) => void;
+  setBackground: (value: string) => void;
+  setLogo: (value: string) => void;
+  setIcon: (value: string) => void;
+};
 
-export function ThemeProvider({ children }) {
+const defaultThemeContextValue: ThemeContextValue = {
+  background: "",
+  logo: "",
+  icon: "",
+  cancelAnimation: false,
+  setCancelAnimation: () => undefined,
+  setBackground: () => undefined,
+  setLogo: () => undefined,
+  setIcon: () => undefined,
+};
+
+export const ThemeContext = createContext<ThemeContextValue>(
+  defaultThemeContextValue,
+);
+
+export function ThemeProvider({ children }: { children: ReactNode }) {
   const [background, setBackground] = useState("");
   const [logo, setLogo] = useState("");
   const [icon, setIcon] = useState("");

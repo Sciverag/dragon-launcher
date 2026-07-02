@@ -30,8 +30,8 @@
     flex-wrap: wrap;
     align-items: center;
     max-height: 100vh;
-    margin-top: auto;
-    margin-bottom: auto;
+    margin-top: 10vh;
+    margin-bottom: 1rem;
     overflow-y: auto;
     -ms-overflow-style: none;
     margin-left: auto;
@@ -133,6 +133,7 @@
     background-size: 100vw 100vh;
     background-position: center;
     background-repeat: no-repeat;
+    background-color: rgb(0, 0, 0);
     background-attachment: fixed;
     filter: brightness(75%);
     z-index: -1;

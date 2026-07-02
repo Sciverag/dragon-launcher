@@ -6,5 +6,7 @@ export type User = {
     hero?: string,
     steamId?: string,
     level: number,
-    xp: number
+    xp: number,
+    equippedTitle?: string | null,
+    unlockedTitles?: string[]
 }

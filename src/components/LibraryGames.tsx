@@ -31,6 +31,7 @@ export default function LibraryGames({
   const [selectedGameId, setSelectedGameId] = useState<string | number | null>(
     null,
   );
+  const { setBackground, setLogo } = useContext(ThemeContext);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [hasInitialized, setHasInitialized] = useState<boolean>(false);
   const [logoHasError, setLogoHasError] = useState<boolean>(false);
@@ -46,6 +47,7 @@ export default function LibraryGames({
   const lastSelId = (location.state as { gameId?: number })?.gameId ?? null;
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setSelectedGameId(lastSelId);
   }, [lastSelId]);
   useEffect(() => {
@@ -317,8 +319,8 @@ export default function LibraryGames({
   }, [activeIndex]);
 
   useEffect(() => {
-    // A newly loaded logo should always get a fresh render attempt.
     if (logo) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setLogoHasError(false);
     }
   }, [logo]);
@@ -335,7 +337,7 @@ export default function LibraryGames({
     }
 
     const selectedItem = list.querySelector(
-      `[data-index=\"${selectedIndex}\"]`,
+      `[data-index="${selectedIndex}"]`,
     ) as HTMLLIElement | null;
 
     if (!selectedItem) {
