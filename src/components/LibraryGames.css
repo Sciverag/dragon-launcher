@@ -34,6 +34,7 @@
     margin-bottom: 1rem;
     overflow-y: auto;
     -ms-overflow-style: none;
+    scroll-behavior: smooth;
     margin-left: auto;
     margin-right: auto;
 }
@@ -52,6 +53,7 @@
     margin-top: auto;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
     scrollbar-width: none;
     -ms-overflow-style: none;
     height: 300px;
@@ -67,6 +69,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    position: relative;
     gap: 0.5rem;
     width: 200px;
     height: fit-content;
@@ -77,10 +80,15 @@
     box-shadow: 0 0 0 2px #ffffff, 0 0 0 4px #ff440000;
     transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out, outline 0.2s ease-in-out;
     margin-bottom: 1rem;
-    overflow: hidden;
     cursor: pointer;
+    overflow: hidden;
     scroll-snap-align: center;
     animation: fade-in-animation 0.5s ease-in-out forwards;
+}
+
+.game-card.no-entry-animation {
+    animation: none;
+    opacity: 1;
 }
 
 .reverse-animation .game-card {

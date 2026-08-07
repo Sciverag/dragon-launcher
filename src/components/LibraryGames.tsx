@@ -24,32 +24,44 @@ export default function LibraryGames({
   games,
 }: LibraryGamesProps) {
   const location = useLocation();
+  const isLibraryRoute = location.pathname === "/library";
+  const lastSelId = (location.state as { gameId?: number })?.gameId ?? null;
   const { logo } = useContext(ThemeContext) as {
     logo: string;
   };
   const [selectedIndexState, setSelectedIndexState] = useState(0);
   const [selectedGameId, setSelectedGameId] = useState<string | number | null>(
-    null,
+    lastSelId,
   );
-  const { setBackground, setLogo } = useContext(ThemeContext);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [hasInitialized, setHasInitialized] = useState<boolean>(false);
   const [logoHasError, setLogoHasError] = useState<boolean>(false);
-  const [changeBackgroundOnce, setChangeBackgroundOnce] = useState<number>(0);
-  const [changeLogoOnce, setChangeLogoOnce] = useState<number>(0);
-  const [changeIconOnce, setChangeIconOnce] = useState<number>(0);
+  const [themeSyncTick, setThemeSyncTick] = useState<number>(0);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const gamesListRef = useRef<HTMLUListElement | null>(null);
   const navigate = useNavigate();
-  const [cancelAnimation, setCancelAnimation] = useState(
-    (location.state as { fromGame?: boolean })?.fromGame ?? false,
-  );
-  const lastSelId = (location.state as { gameId?: number })?.gameId ?? null;
+  const fromGame =
+    (location.state as { fromGame?: boolean } | null)?.fromGame ?? false;
+  const [cancelAnimation, setCancelAnimation] = useState(fromGame);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setSelectedGameId(lastSelId);
   }, [lastSelId]);
+  useEffect(() => {
+    if (!fromGame) {
+      return;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      setCancelAnimation(true);
+    }, 0);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
+  }, [fromGame]);
+
   useEffect(() => {
     if (cancelAnimation) {
       setTimeout(() => {
@@ -70,6 +82,11 @@ export default function LibraryGames({
     );
 
     if (priorityIndex > 0) {
+      orderedIndexes.sort((a, b) => {
+        const distanceA = Math.abs(a - priorityIndex);
+        const distanceB = Math.abs(b - priorityIndex);
+        return distanceA - distanceB;
+      });
       orderedIndexes.splice(priorityIndex, 1);
       orderedIndexes.unshift(priorityIndex);
     }
@@ -91,9 +108,7 @@ export default function LibraryGames({
 
   const handleSelectedChange = () => {
     setLogoHasError(false);
-    setChangeBackgroundOnce(0);
-    setChangeLogoOnce(0);
-    setChangeIconOnce(0);
+    setThemeSyncTick((current) => current + 1);
     const game_logo = document.querySelector(".game-logo");
     const game_name = document.querySelector(".game-name");
     if (game_logo) {
@@ -211,23 +226,30 @@ export default function LibraryGames({
   };
 
   const selectLeftGame = () => {
-    setSelectedIndexState((current) => {
-      const nextIndex = Math.max(current - 1, 0);
-      setSelectedGameId(filteredGames[nextIndex]?.id ?? null);
-      return nextIndex;
-    });
+    const nextIndex = Math.max(selectedIndex - 1, 0);
+
+    if (nextIndex === selectedIndex) {
+      return;
+    }
+
+    setSelectedIndexState(nextIndex);
+    setSelectedGameId(filteredGames[nextIndex]?.id ?? null);
   };
 
   const selectRightGame = () => {
-    setSelectedIndexState((current) => {
-      const nextIndex = Math.min(current + 1, filteredGames.length - 1);
-      setSelectedGameId(filteredGames[nextIndex]?.id ?? null);
-      return nextIndex;
-    });
+    const nextIndex = Math.min(selectedIndex + 1, filteredGames.length - 1);
+
+    if (nextIndex === selectedIndex) {
+      return;
+    }
+
+    setSelectedIndexState(nextIndex);
+    setSelectedGameId(filteredGames[nextIndex]?.id ?? null);
   };
 
+  const selectedIdCandidate = selectedGameId ?? lastSelId;
   const selectedIndexFromId = filteredGames.findIndex(
-    (game) => String(game.id) === String(selectedGameId),
+    (game) => String(game.id) === String(selectedIdCandidate),
   );
   const selectedIndex =
     filteredGames.length > 0
@@ -288,14 +310,11 @@ export default function LibraryGames({
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setSelectedIndexState(lastSelectedIndex);
       setSelectedGameId(filteredGames[lastSelectedIndex]?.id ?? lastSelId);
-      setChangeBackgroundOnce(1);
-      setChangeLogoOnce(1);
-      setChangeIconOnce(1);
       setHasInitialized(true);
     } else {
       return;
     }
-  }, [lastSelectedIndex]);
+  }, [filteredGames, hasInitialized, lastSelId, lastSelectedIndex]);
 
   useEffect(() => {
     containerRef.current?.focus();
@@ -329,6 +348,28 @@ export default function LibraryGames({
     containerRef.current?.focus();
     handleOrientationChange();
   }, [libraryOrientation]);
+
+  useEffect(() => {
+    if (!isLibraryRoute) {
+      return;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      containerRef.current?.focus();
+      setHoveredIndex(null);
+      if (fromGame && lastSelId !== null) {
+        setSelectedGameId(lastSelId);
+      }
+      handleSelectedChange();
+      window.requestAnimationFrame(() => {
+        containerRef.current?.focus();
+      });
+    }, 0);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
+  }, [isLibraryRoute]);
 
   useEffect(() => {
     const list = gamesListRef.current;
@@ -394,7 +435,7 @@ export default function LibraryGames({
         <>
           {filteredGames[activeIndex] && (
             <>
-              {logo && !logoHasError ? (
+              {logo && !logoHasError && (
                 <img
                   className={`game-logo ${cancelAnimation ? "cancel-animation" : ""}`}
                   src={logo}
@@ -402,12 +443,6 @@ export default function LibraryGames({
                     setLogoHasError(true);
                   }}
                 />
-              ) : (
-                <h2
-                  className={`game-name ${cancelAnimation ? "cancel-animation" : ""}`}
-                >
-                  {filteredGames[activeIndex].name}
-                </h2>
               )}
             </>
           )}
@@ -433,17 +468,12 @@ export default function LibraryGames({
                 index={index}
                 libraryOrientation={libraryOrientation}
                 selectedIndex={selectedIndex}
-                changeBackgroundOnce={changeBackgroundOnce}
-                changeLogoOnce={changeLogoOnce}
-                changeIconOnce={changeIconOnce}
+                themeSyncTick={themeSyncTick}
                 activeIndex={activeIndex}
                 handleGamePageNav={handleGamePageNav}
                 setHoveredIndex={setHoveredIndex}
                 setSelectedIndexState={setSelectedIndexState}
                 setSelectedGameId={setSelectedGameId}
-                setChangeBackgroundOnce={setChangeBackgroundOnce}
-                setChangeLogoOnce={setChangeLogoOnce}
-                setChangeIconOnce={setChangeIconOnce}
                 shouldLoadAssets={
                   activeIndex === index ||
                   (loadRankByIndex.get(index) ?? Number.MAX_SAFE_INTEGER) <=

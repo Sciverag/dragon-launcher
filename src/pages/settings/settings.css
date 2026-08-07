@@ -1,0 +1,186 @@
+.settings-page {
+    min-height: 100vh;
+    display: grid;
+    grid-template-rows: auto 1fr;
+    grid-template-columns: 0.2fr 1fr;
+    padding: 1.5rem;
+}
+
+.select-button {
+    box-shadow: none;
+    border-radius: 999px;
+    color: white;
+    padding: 0.6rem 1rem;
+    cursor: pointer;
+}
+
+.settings-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    overflow-y: auto;
+}
+
+.settings-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    grid-column: span 2;
+    margin-bottom: 1rem;
+    width: 100%;
+}
+
+.settings-select {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 0.6rem;
+    margin-bottom: 1rem;
+}
+
+.settings-header div {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.settings-header .material-symbols-outlined {
+    font-size: 4rem;
+    color: white;
+}
+
+.settings-header h1 {
+    color: white;
+    margin: 0;
+    font-weight: bold;
+    font-size: larger;
+    letter-spacing: 0.04em;
+}
+
+.settings-back {
+    border: 0;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.12);
+    color: white;
+    padding: 0.6rem 1rem;
+    cursor: pointer;
+}
+
+.settings-group {
+    border-radius: 16px;
+    padding: 1rem;
+    margin: 0.8rem 0;
+}
+
+.settings-group h2 {
+    margin: 0 0 0.8rem;
+    color: white;
+    font-size: 1.1rem;
+}
+
+.settings-group label,
+.settings-group p {
+    display: block;
+    color: rgba(255, 255, 255, 0.83);
+    margin: 0.35rem 0 0.5rem;
+}
+
+.settings-group select,
+.settings-group input[type="range"] {
+    width: 100%;
+    margin-bottom: 0.5rem;
+}
+
+.settings-group select {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    border-radius: 10px;
+    height: 2.6rem;
+    padding: 0 0.8rem;
+}
+
+.settings-group select:disabled {
+    opacity: 0.55;
+}
+
+.settings-actions-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+}
+
+.settings-inline-button {
+    border: 0;
+    border-radius: 999px;
+    background: linear-gradient(135deg, rgb(82, 170, 219), rgb(44, 98, 166));
+    color: white;
+    padding: 0.7rem 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 120ms ease, filter 120ms ease;
+}
+
+.settings-inline-button:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.06);
+}
+
+.settings-inline-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+    filter: none;
+}
+
+.settings-inline-button--danger {
+    background: linear-gradient(135deg, rgb(206, 79, 79), rgb(138, 34, 34));
+}
+
+.settings-inline-button--warning {
+    background: linear-gradient(135deg, rgb(220, 148, 46), rgb(175, 92, 22));
+}
+
+.settings-group--danger {
+    border-color: rgba(224, 122, 122, 0.45);
+}
+
+.settings-hint {
+    margin-top: 0.8rem;
+    color: rgba(255, 255, 255, 0.64);
+}
+
+.settings-feedback {
+    margin: 0.7rem 0 0;
+    color: rgb(150, 214, 255);
+}
+
+@media (max-width: 720px) {
+    .settings-page {
+        padding: 1rem 0.8rem 5rem;
+    }
+
+    .settings-card {
+        padding: 1rem;
+    }
+
+    .settings-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .settings-back {
+        width: 100%;
+    }
+
+    .settings-actions-row {
+        flex-direction: column;
+    }
+
+    .settings-inline-button {
+        width: 100%;
+    }
+}

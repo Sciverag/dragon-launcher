@@ -16,6 +16,7 @@ export const LibraryHeader = ({
   currentOrientation = "list",
 }: LibraryHeaderProps) => {
   const { setBackground, setLogo } = useContext(ThemeContext);
+  const userId = useAuthStore((state) => state.user?.id);
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
   const avatar = useAuthStore((state) => state.user?.avatar);
   const navigate = useNavigate();
@@ -127,7 +128,7 @@ export const LibraryHeader = ({
         onClick={() =>
           !isLoggedIn
             ? handleRouteChange("/login")
-            : handleRouteChange("/profile")
+            : handleRouteChange(`/profile/${userId}`)
         }
       >
         {isLoggedIn ? (

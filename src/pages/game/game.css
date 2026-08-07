@@ -133,6 +133,24 @@
     overscroll-behavior-y: contain;
 }
 
+.genre-info {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+}
+
+.genre {
+    background-color: rgba(255, 255, 255, 0.039);
+    color: rgba(255, 255, 255, 0.893) !important;
+    padding: 0.25rem 0.5rem;
+    font-size: 1.2rem !important;
+    border-radius: 5px;
+    min-width: 100px;
+    text-align: center;
+    margin-right: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
 .description-container ul {
     list-style: disc;
     margin-left: 2%;
@@ -150,7 +168,6 @@
 .description-container>*:is(h1, h2, h3, h4, h5, h6)>strong {
     color: rgb(240, 240, 240);
     font-weight: 0;
-    letter-spacing: 8%;
     font-size: 2rem;
     font-weight: lighter;
     font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;

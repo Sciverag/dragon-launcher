@@ -25,6 +25,8 @@
 .logo-playing {
     width: 175px;
     height: 75px;
+    object-fit: contain;
+    object-position: center;
 }
 
 .playingnow-text {

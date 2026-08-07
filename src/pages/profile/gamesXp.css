@@ -1,0 +1,150 @@
+.games-xp-page {
+    height: 100vh;
+    width: 100vw;
+    overflow-y: auto;
+}
+
+.games-xp-card {
+    margin: 0 auto;
+    padding: 1rem;
+}
+
+.games-xp-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    gap: 1rem;
+}
+
+.games-xp-label {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.64);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.82rem;
+}
+
+.games-xp-header h1 {
+    margin: 0.4rem 0 0;
+    color: white;
+    font-size: 2rem;
+}
+
+.games-xp-subtitle {
+    margin: 0.75rem 0 0;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.games-xp-back {
+    border: none;
+    border-radius: 999px;
+    padding: 0.8rem 1.2rem;
+    color: white;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.games-xp-total {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.games-xp-total span {
+    color: rgba(255, 255, 255, 0.76);
+}
+
+.games-xp-total strong {
+    color: rgb(119, 224, 199);
+    font-size: 1.6rem;
+}
+
+.games-xp-list {
+    margin: 1rem 0 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+}
+
+.games-xp-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    border-radius: 14px;
+    padding: 0.9rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.games-xp-item-main {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.games-xp-hero {
+    width: 128px;
+    height: 60px;
+    border-radius: 10px;
+    object-fit: cover;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.games-xp-hero--fallback {
+    background: linear-gradient(140deg, rgba(86, 119, 163, 0.5), rgba(20, 30, 46, 0.5));
+}
+
+.games-xp-list p {
+    margin: 0;
+    color: white;
+    font-weight: 600;
+}
+
+.games-xp-list small {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.games-xp-list strong {
+    color: rgb(140, 217, 255);
+    font-size: 1.2rem;
+}
+
+.games-xp-empty {
+    margin-top: 1rem;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+@media (max-width: 720px) {
+    .games-xp-header {
+        flex-direction: column;
+    }
+
+    .games-xp-back {
+        width: 100%;
+    }
+
+    .games-xp-list li {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .games-xp-item-main {
+        width: 100%;
+    }
+
+    .games-xp-hero {
+        width: 100%;
+        max-width: 260px;
+        height: 76px;
+    }
+}

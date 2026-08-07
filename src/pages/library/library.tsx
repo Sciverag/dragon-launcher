@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { LibraryHeader } from "../../components/LibraryHeader";
 import "./library.css";
@@ -13,6 +13,8 @@ import {
 
 function Library() {
   const location = useLocation();
+  const isLibraryRoute = location.pathname === "/library";
+  const containerRef = useRef<HTMLDivElement | null>(null);
   const orientation = useLibraryStore((state) => state.orientation);
   const setOrientation = useLibraryStore((state) => state.setOrientation);
   const games = useLibraryStore((state) => state.games);
@@ -28,9 +30,7 @@ function Library() {
     fromPlaying ||
     (currentSteamId !== null && games.length === 0);
   const [loading, setLoading] = useState<boolean>(shouldReloadLibrary);
-  const [showRipples, setShowRipples] = useState(
-    (location.state as { fromHome?: boolean })?.fromHome ?? false,
-  );
+  const [showRipples, setShowRipples] = useState(false);
 
   const handleOrientationChange = (newOrientation: "grid" | "list") => {
     setOrientation(newOrientation);
@@ -47,6 +47,35 @@ function Library() {
       }, 1000);
     }
   }, [showRipples]);
+
+  useEffect(() => {
+    const fromHome =
+      (location.state as { fromHome?: boolean } | null)?.fromHome ?? false;
+
+    if (isLibraryRoute && fromHome) {
+      setShowRipples(true);
+    }
+  }, [isLibraryRoute, location.state]);
+
+  useLayoutEffect(() => {
+    if (!isLibraryRoute) {
+      return;
+    }
+
+    const container = containerRef.current;
+    if (!container) {
+      return;
+    }
+
+    container
+      .querySelectorAll(
+        ".library-header, .library-games, .games-list, .scroll-button, .library-ocean, .game-button, .game-logo, .game-name",
+      )
+      .forEach((element) => {
+        element.classList.remove("reverse-animation");
+        element.classList.remove("hidden");
+      });
+  }, [isLibraryRoute]);
 
   useEffect(() => {
     if (!shouldReloadLibrary) {
@@ -97,7 +126,7 @@ function Library() {
   }, [setGames, shouldReloadLibrary, currentSteamId]);
 
   return (
-    <div className="library-container">
+    <div className="library-container" ref={containerRef}>
       <LibraryHeader
         onOrientationChange={handleOrientationChange}
         onSearch={handleSearch}
