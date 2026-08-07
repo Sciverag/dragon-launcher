@@ -1,5 +1,6 @@
 import { useRef, useState, useEffect, useCallback } from "react";
 import Hls from "hls.js";
+import { useSettingsStore } from "../stores/settingsStore";
 import "./video_player.css";
 
 interface videoPlayerProps {
@@ -15,19 +16,23 @@ export default function VideoPlayer({
   gameBackground,
   accentColor = "#8B4513",
 }: videoPlayerProps) {
+  const globalAudioVolume = useSettingsStore((state) => state.audioVolume);
+  const setGlobalAudioVolume = useSettingsStore(
+    (state) => state.setAudioVolume,
+  );
+  const globalAudioMuted = useSettingsStore((state) => state.audioMuted);
+  const setGlobalAudioMuted = useSettingsStore((state) => state.setAudioMuted);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const [isPlaying, setIsPlaying] = useState(true);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
-  const [volume, setVolume] = useState(0.01);
-  const [isMuted, setIsMuted] = useState(false);
   const [, setFrameAccentColor] = useState(accentColor);
   const [haloAccentColor, setHaloAccentColor] = useState(accentColor);
   const [haloBackdropUrl, setHaloBackdropUrl] = useState<string | null>(null);
   const videoContainerRef = useRef<HTMLDivElement | null>(null);
   const lastColorSampleRef = useRef(0);
   const accentColorRef = useRef(accentColor);
-  const volumeRef = useRef(volume);
+  const volumeRef = useRef(globalAudioVolume);
   const haloTransitionRef = useRef<number | null>(null);
 
   const toRgba = useCallback((hex: string, alpha: number) => {
@@ -226,8 +231,13 @@ export default function VideoPlayer({
   }, [accentColor]);
 
   useEffect(() => {
-    volumeRef.current = volume;
-  }, [volume]);
+    volumeRef.current = globalAudioVolume;
+
+    if (videoRef.current) {
+      videoRef.current.volume = globalAudioVolume;
+      videoRef.current.muted = globalAudioMuted;
+    }
+  }, [globalAudioMuted, globalAudioVolume]);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -249,6 +259,7 @@ export default function VideoPlayer({
       video.addEventListener("play", handlePlay);
       video.addEventListener("pause", handlePause);
       video.volume = volumeRef.current;
+      video.muted = globalAudioMuted;
       return () => {
         hls.destroy();
         video.removeEventListener("play", handlePlay);
@@ -261,6 +272,8 @@ export default function VideoPlayer({
       video.play().catch(() => {});
       video.addEventListener("play", handlePlay);
       video.addEventListener("pause", handlePause);
+      video.volume = volumeRef.current;
+      video.muted = globalAudioMuted;
       return () => {
         video.removeEventListener("play", handlePlay);
         video.removeEventListener("pause", handlePause);
@@ -271,11 +284,13 @@ export default function VideoPlayer({
     video.play().catch(() => {});
     video.addEventListener("play", handlePlay);
     video.addEventListener("pause", handlePause);
+    video.volume = volumeRef.current;
+    video.muted = globalAudioMuted;
     return () => {
       video.removeEventListener("play", handlePlay);
       video.removeEventListener("pause", handlePause);
     };
-  }, [videoUrl]);
+  }, [globalAudioMuted, videoUrl]);
 
   const handlePlayPause = useCallback(() => {
     if (videoRef.current) {
@@ -316,20 +331,22 @@ export default function VideoPlayer({
   const handleVolumeChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const vol = parseFloat(e.target.value);
-      setVolume(vol);
+      setGlobalAudioVolume(vol);
+
+      if (vol > 0 && globalAudioMuted) {
+        setGlobalAudioMuted(false);
+      }
+
       if (videoRef.current) {
         videoRef.current.volume = vol;
       }
     },
-    [],
+    [globalAudioMuted, setGlobalAudioMuted, setGlobalAudioVolume],
   );
 
   const handleMuteChange = () => {
-    if (isMuted) {
-      setIsMuted(false);
-    } else {
-      setIsMuted(true);
-    }
+    const nextMuted = !globalAudioMuted;
+    setGlobalAudioMuted(nextMuted);
   };
 
   const formatTime = (time: number) => {
@@ -355,7 +372,7 @@ export default function VideoPlayer({
       <video
         ref={videoRef}
         autoPlay
-        muted={isMuted}
+        muted={globalAudioMuted}
         loop
         playsInline
         poster={videoPoster || gameBackground}
@@ -405,18 +422,18 @@ export default function VideoPlayer({
                 onClick={handleMuteChange}
                 className="material-symbols-outlined volume-icon"
               >
-                {isMuted ? "volume_off" : "volume_up"}
+                {globalAudioMuted ? "volume_off" : "volume_up"}
               </span>
               <input
                 type="range"
                 min="0"
                 max="1"
                 step="0.001"
-                value={volume}
+                value={globalAudioVolume}
                 onChange={handleVolumeChange}
                 className="volume-slider"
                 style={{
-                  background: getProgressFill(volume * 100),
+                  background: getProgressFill(globalAudioVolume * 100),
                 }}
               />
             </div>

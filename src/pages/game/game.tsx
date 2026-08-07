@@ -411,8 +411,6 @@ function Game() {
         }
       }
 
-      console.log(gameData);
-
       setGameHasReleased(gameData.release_date.coming_soon === false);
       setIsInstalled(selectedGame?.isLocal ?? false);
 
@@ -422,6 +420,10 @@ function Game() {
         background: resolvedBackground,
         description: gameData.detailed_description,
         developer: gameData.developers?.join(", ") || "",
+        genres:
+          gameData.genres?.map(
+            (genre: { description: string }) => genre.description,
+          ) ?? [],
         release: gameData.release_date.date,
         played_time: formatPlayedTime(selectedGame?.played_minutes),
         trailer: trailerUrl,
@@ -530,6 +532,13 @@ function Game() {
             <h1>Tiempo Jugado</h1>
             <p>{game?.played_time}</p>
           </div>
+          <div className="genre-info">
+            {game?.genres.map((genre, index) => (
+              <p className={`genre`} key={index}>
+                {genre}
+              </p>
+            ))}
+          </div>
         </section>
         <section className="game-buttons-container">
           {gameHasReleased && (
@@ -545,7 +554,7 @@ function Game() {
           <button className="button">
             <span className="material-symbols-outlined">image</span>
           </button>
-          <button className="button">
+          <button className="button" onClick={() => navigate("/settings")}>
             <span className="material-symbols-outlined">settings</span>
           </button>
         </section>

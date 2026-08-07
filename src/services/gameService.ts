@@ -39,3 +39,32 @@ export async function getSteamPlayerAchievements(gameId: string | number, token:
 
     return res.data as SteamPlayerAchievementsResponse;
 }
+
+export async function getSteamPlayerAchievementsBatch(
+    gameIds: Array<string | number>,
+    token: string,
+) {
+    const appIds = Array.from(
+        new Set(
+            gameIds
+                .map((gameId) => Number(gameId))
+                .filter((gameId) => Number.isFinite(gameId)),
+        ),
+    );
+
+    if (appIds.length === 0) {
+        return [] as SteamPlayerAchievementsResponse[];
+    }
+
+    const res = await axios.post(
+        "http://localhost:4500/assets/steam/achievements/batch",
+        { appIds },
+        {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        },
+    );
+
+    return res.data as SteamPlayerAchievementsResponse[];
+}

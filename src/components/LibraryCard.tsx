@@ -20,17 +20,12 @@ interface LibraryCardProps {
   libraryOrientation: string;
   selectedIndex: number;
   shouldLoadAssets: boolean;
-  changeBackgroundOnce: number;
-  changeLogoOnce: number;
-  changeIconOnce: number;
+  themeSyncTick: number;
   activeIndex: number;
   handleGamePageNav: (clickedIndex: number) => void;
   setHoveredIndex: (value: number | null) => void;
   setSelectedIndexState: Dispatch<SetStateAction<number>>;
   setSelectedGameId: Dispatch<SetStateAction<string | number | null>>;
-  setChangeBackgroundOnce: Dispatch<SetStateAction<number>>;
-  setChangeLogoOnce: Dispatch<SetStateAction<number>>;
-  setChangeIconOnce: Dispatch<SetStateAction<number>>;
 }
 
 type AssetSources = {
@@ -49,17 +44,12 @@ export default function LibraryCard({
   libraryOrientation,
   selectedIndex,
   shouldLoadAssets,
-  changeBackgroundOnce,
-  changeLogoOnce,
-  changeIconOnce,
+  themeSyncTick,
   activeIndex,
   handleGamePageNav,
   setHoveredIndex,
   setSelectedIndexState,
   setSelectedGameId,
-  setChangeBackgroundOnce,
-  setChangeLogoOnce,
-  setChangeIconOnce,
 }: LibraryCardProps) {
   const [hasInitialized, setHasInitialized] = useState<boolean>(false);
   const [hasLoadedDetails, setHasLoadedDetails] = useState<boolean>(false);
@@ -233,6 +223,16 @@ export default function LibraryCard({
     [assetSources, game.id, game.platform, obtainGameCache],
   );
 
+  const calculateAnimationDelay = useCallback(() => {
+    if (selectedIndex === index) {
+      return "0s";
+    }
+    if (selectedIndex > index) {
+      return `${(selectedIndex - index) * 0.08}s`;
+    }
+    return `${(index - selectedIndex) * 0.08}s`;
+  }, [index, selectedIndex]);
+
   useEffect(() => {
     const current = liRef.current;
 
@@ -297,10 +297,8 @@ export default function LibraryCard({
       activeIndex === index &&
       latestActiveIndexRef.current === index &&
       hasLoadedDetails &&
-      backgroundPath &&
-      changeBackgroundOnce < 1
+      backgroundPath
     ) {
-      setChangeBackgroundOnce(1);
       setBackground(backgroundPath);
     }
   }, [
@@ -309,8 +307,7 @@ export default function LibraryCard({
     hasLoadedDetails,
     index,
     setBackground,
-    changeBackgroundOnce,
-    setChangeBackgroundOnce,
+    themeSyncTick,
   ]);
 
   useEffect(() => {
@@ -318,42 +315,22 @@ export default function LibraryCard({
       activeIndex === index &&
       latestActiveIndexRef.current === index &&
       hasLoadedDetails &&
-      logoPath &&
-      changeLogoOnce < 1
+      logoPath
     ) {
-      setChangeLogoOnce(1);
       setLogo(logoPath);
     }
-  }, [
-    logoPath,
-    activeIndex,
-    hasLoadedDetails,
-    index,
-    setLogo,
-    changeLogoOnce,
-    setChangeLogoOnce,
-  ]);
+  }, [logoPath, activeIndex, hasLoadedDetails, index, setLogo, themeSyncTick]);
 
   useEffect(() => {
     if (
       activeIndex === index &&
       latestActiveIndexRef.current === index &&
       hasLoadedDetails &&
-      iconPath &&
-      changeIconOnce < 1
+      iconPath
     ) {
-      setChangeIconOnce(1);
       setIcon(iconPath);
     }
-  }, [
-    iconPath,
-    activeIndex,
-    hasLoadedDetails,
-    index,
-    setIcon,
-    changeIconOnce,
-    setChangeIconOnce,
-  ]);
+  }, [iconPath, activeIndex, hasLoadedDetails, index, setIcon, themeSyncTick]);
 
   const hasValidCover = Boolean(coverPath) && coverPath !== failedCoverSrc;
   const hasValidBackground =
@@ -371,7 +348,9 @@ export default function LibraryCard({
       aria-label={game.name}
       title={game.name}
       className={`game-card glass ${activeIndex === index ? "selected" : ""} ${!game.isLocal ? "not-installed" : ""}`}
-      style={{ animationDelay: `${index * 0.08}s` }}
+      style={{
+        animationDelay: calculateAnimationDelay(),
+      }}
       data-index={index}
       ref={liRef}
       role="option"

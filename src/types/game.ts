@@ -7,6 +7,7 @@ export type game = {
     icon?: string;
     background?: string;
     platform: "Steam" | "Epic" | "Custom";
+    genres?: string[];
     last_played: number;
     played_minutes?: number;
     isLocal?: boolean;
@@ -18,6 +19,7 @@ export type game_detail = {
     logo?: string;
     background: string;
     developer: string;
+    genres: string[];
     release: string;
     played_time: string;
     description: string;

@@ -25,14 +25,13 @@ export const authService = {
     if (credentials.password.length < 4) {
       throw new Error('La contraseña debe tener al menos 4 caracteres');
     }
-
-    await axios.post('http://localhost:4500/auth/login', credentials).then((response) => {
+    try {
+      const response = await axios.post('http://localhost:4500/auth/login', credentials);
       const { login } = useAuthStore.getState();
-      login(response.data.user, response.data.access_token);
+      await login(response.data.user, response.data.access_token, response.data.refresh_token);
+    } catch (error) {
+      throw new Error(String(error));
     }
-    ).catch((error) => {
-      throw new Error(error)
-    })
   },
 
   async register(credentials: RegisterCredentials): Promise<void> {
@@ -43,13 +42,13 @@ export const authService = {
     if (credentials.password.length < 8) {
       throw new Error('La contraseña debe tener al menos 8 caracteres');
     }
-
-    await axios.post('http://localhost:4500/auth/register', credentials).then((response) => {
+    try {
+      const response = await axios.post('http://localhost:4500/auth/register', credentials);
       const { register } = useAuthStore.getState();
-      register(response.data.user, response.data.access_token);
-    }).catch((error) => {
-      throw new Error(error)
-    })
+      await register(response.data.user, response.data.access_token, response.data.refresh_token);
+    } catch (error) {
+      throw new Error(String(error));
+    }
 
 
   },
@@ -72,18 +71,51 @@ export const authService = {
     return user;
   },
 
-  connectSteam(): void {
+  connectSteam(returnPath = '/settings'): void {
     const { token } = useAuthStore.getState();
 
     if (!token) {
       throw new Error('Debes iniciar sesion para conectar Steam');
     }
 
-    const returnTo = `${window.location.origin}/profile`;
+    const normalizedReturnPath = returnPath.startsWith('/')
+      ? returnPath
+      : '/settings';
+    const returnTo = `${window.location.origin}${normalizedReturnPath}`;
     const steamLinkUrl = new URL('http://localhost:4500/auth/steam');
     steamLinkUrl.searchParams.set('token', token);
     steamLinkUrl.searchParams.set('returnTo', returnTo);
 
     window.location.href = steamLinkUrl.toString();
+  },
+
+  async disconnectSteam(): Promise<void> {
+    const { token, updateUser } = useAuthStore.getState();
+
+    if (!token) {
+      throw new Error('Debes iniciar sesion para desconectar Steam');
+    }
+
+    const response = await axios.post(
+      'http://localhost:4500/auth/steam/disconnect',
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+
+    const updatedUser = response.data?.user;
+
+    if (updatedUser) {
+      updateUser({
+        steamId: updatedUser.steamId ?? undefined,
+      });
+    } else {
+      updateUser({
+        steamId: undefined,
+      });
+    }
   },
 };

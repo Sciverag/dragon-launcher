@@ -51,7 +51,9 @@ export default function Achievements({ achievements }: AchievementsProps) {
                 <li
                   key={achievement.apiName}
                   className="achievement-item"
-                  style={{ animationDelay: `${index * 0.1}s` }}
+                  style={{
+                    animationDelay: `${index * 0.1}s`,
+                  }}
                 >
                   <img
                     className={`achievement-item__icon achievement-item__icon--${quality}${isHiddenLocked ? " achievement-item__icon--hidden" : ""} ${!achievement.achieved ? "achievement-item__icon--locked" : ""}`}
@@ -63,6 +65,18 @@ export default function Achievements({ achievements }: AchievementsProps) {
                     })()}
                     alt={showRealData ? achievement.name : "Logro oculto"}
                   />
+
+                  <img
+                    className={`achievement-item__icon__background ${!achievement.achieved ? "achievement-item__icon__background--locked" : ""}`}
+                    src={(() => {
+                      const resolvedIcon = achievement.achieved
+                        ? achievement.icon
+                        : achievement.iconGray || achievement.icon;
+                      return resolvedIcon?.trim() ? resolvedIcon : undefined;
+                    })()}
+                    alt={showRealData ? achievement.name : "Logro oculto"}
+                  />
+
                   <div className="achievement-item__content">
                     <div className="achievement-item__head">
                       <h3>

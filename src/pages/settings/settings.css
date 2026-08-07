@@ -1,0 +1,161 @@
+.settings-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 2rem 1rem 6rem;
+    overflow-y: auto;
+}
+
+.settings-card {
+    width: min(900px, 100%);
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.26);
+    background:
+        radial-gradient(circle at top right, rgba(95, 153, 207, 0.2), transparent 35%),
+        linear-gradient(145deg, rgba(11, 14, 18, 0.85), rgba(28, 33, 39, 0.88));
+    box-shadow: 0 20px 80px rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(12px);
+    padding: 1.2rem;
+}
+
+.settings-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.settings-header h1 {
+    color: white;
+    margin: 0;
+    letter-spacing: 0.04em;
+}
+
+.settings-back {
+    border: 0;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.12);
+    color: white;
+    padding: 0.6rem 1rem;
+    cursor: pointer;
+}
+
+.settings-group {
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 16px;
+    padding: 1rem;
+    margin: 0.8rem 0;
+    background: rgba(10, 12, 16, 0.46);
+}
+
+.settings-group h2 {
+    margin: 0 0 0.8rem;
+    color: white;
+    font-size: 1.1rem;
+}
+
+.settings-group label,
+.settings-group p {
+    display: block;
+    color: rgba(255, 255, 255, 0.83);
+    margin: 0.35rem 0 0.5rem;
+}
+
+.settings-group select,
+.settings-group input[type="range"] {
+    width: 100%;
+    margin-bottom: 0.5rem;
+}
+
+.settings-group select {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    border-radius: 10px;
+    height: 2.6rem;
+    padding: 0 0.8rem;
+}
+
+.settings-group select:disabled {
+    opacity: 0.55;
+}
+
+.settings-actions-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+}
+
+.settings-inline-button {
+    border: 0;
+    border-radius: 999px;
+    background: linear-gradient(135deg, rgb(82, 170, 219), rgb(44, 98, 166));
+    color: white;
+    padding: 0.7rem 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 120ms ease, filter 120ms ease;
+}
+
+.settings-inline-button:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.06);
+}
+
+.settings-inline-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+    filter: none;
+}
+
+.settings-inline-button--danger {
+    background: linear-gradient(135deg, rgb(206, 79, 79), rgb(138, 34, 34));
+}
+
+.settings-inline-button--warning {
+    background: linear-gradient(135deg, rgb(220, 148, 46), rgb(175, 92, 22));
+}
+
+.settings-group--danger {
+    border-color: rgba(224, 122, 122, 0.45);
+}
+
+.settings-hint {
+    margin-top: 0.8rem;
+    color: rgba(255, 255, 255, 0.64);
+}
+
+.settings-feedback {
+    margin: 0.7rem 0 0;
+    color: rgb(150, 214, 255);
+}
+
+@media (max-width: 720px) {
+    .settings-page {
+        padding: 1rem 0.8rem 5rem;
+    }
+
+    .settings-card {
+        padding: 1rem;
+    }
+
+    .settings-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .settings-back {
+        width: 100%;
+    }
+
+    .settings-actions-row {
+        flex-direction: column;
+    }
+
+    .settings-inline-button {
+        width: 100%;
+    }
+}
