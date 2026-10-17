@@ -8,7 +8,6 @@ import {
 import { useAuthStore } from "../../stores/authStore";
 import { useLibraryStore } from "../../stores/libraryStore";
 import {
-  dedupeTitles,
   getAchievementQuality,
   getAchievementXp,
   getLevelProgress,
@@ -52,6 +51,7 @@ export default function Profile() {
 
   useEffect(() => {
     if (!userId) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setProfileUser(null);
       setProfileError("No se pudo resolver el perfil solicitado.");
       return;
@@ -90,6 +90,7 @@ export default function Profile() {
 
   useEffect(() => {
     if (!userId) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setPublicSnapshots([]);
       setPublicLibraryGames([]);
       return;
