@@ -1,14 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { getGameDetails } from "../../services/gameService";
-import { getPublicAchievementsOverview } from "../../services/userService";
-import { useAuthStore } from "../../stores/authStore";
-import { useLibraryStore } from "../../stores/libraryStore";
+import { getGameDetails } from "../../../services/gameService";
+import { getPublicAchievementsOverview } from "../../../services/userService";
+import { useAuthStore } from "../../../stores/authStore";
+import { useLibraryStore } from "../../../stores/libraryStore";
 import {
   calculateXpFromAchievements,
   readAchievementSnapshots,
-} from "../../utils/leveling";
-import type { game } from "../../types/game";
+} from "../../../utils/leveling";
+import type { game } from "../../../types/game";
 import "./gamesXp.css";
 
 type GameXpEntry = {
@@ -39,6 +39,7 @@ export default function GamesXp() {
 
   useEffect(() => {
     if (!userId || isOwnProfile) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setPublicLibraryGames((current) => (current.length > 0 ? [] : current));
       return;
     }

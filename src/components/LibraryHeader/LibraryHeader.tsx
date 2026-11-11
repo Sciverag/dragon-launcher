@@ -1,8 +1,8 @@
 import { useContext, useState } from "react";
-import { useAuthStore } from "../stores/authStore";
+import { useAuthStore } from "../../stores/authStore";
 import "./LibraryHeader.css";
 import { useNavigate } from "react-router-dom";
-import { ThemeContext } from "../userContext";
+import { ThemeContext } from "../../userContext";
 
 interface LibraryHeaderProps {
   onOrientationChange?: (orientation: "grid" | "list") => void;

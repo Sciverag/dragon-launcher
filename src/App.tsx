@@ -8,7 +8,7 @@ import Register from "./pages/register/register";
 import Game from "./pages/game/game";
 import Playing from "./pages/playing/playing";
 import Profile from "./pages/profile/profile";
-import GamesXp from "./pages/profile/gamesXp";
+import GamesXp from "./pages/profile/GamesXp/gamesXp";
 import Settings from "./pages/settings/settings";
 import { applyInitialWindowSettings } from "./services/windowSettingsService";
 
@@ -24,6 +24,7 @@ function App() {
 
   useEffect(() => {
     if (isLibraryRoute) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setHasVisitedLibrary(true);
     }
   }, [isLibraryRoute]);

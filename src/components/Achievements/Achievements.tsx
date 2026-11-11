@@ -1,10 +1,10 @@
 import "./Achievements.css";
-import type { SteamAchievementProgress } from "../types/game";
+import type { SteamAchievementProgress } from "../../types/game";
 import {
   getAchievementQuality,
   normalizeGlobalPercent,
   type AchievementQuality,
-} from "../utils/leveling";
+} from "../../utils/leveling";
 
 type AchievementsProps = {
   achievements: SteamAchievementProgress[];

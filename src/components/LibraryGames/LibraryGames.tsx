@@ -8,9 +8,9 @@ import {
 } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import "./LibraryGames.css";
-import type { game } from "../types/game";
-import LibraryCard from "./LibraryCard";
-import { ThemeContext } from "../userContext";
+import type { game } from "../../types/game";
+import LibraryCard from "../LibraryCard/LibraryCard";
+import { ThemeContext } from "../../userContext";
 
 interface LibraryGamesProps {
   libraryOrientation: "grid" | "list";

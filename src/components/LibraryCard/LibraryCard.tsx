@@ -7,11 +7,11 @@ import {
   type Dispatch,
   type SetStateAction,
 } from "react";
-import type { game } from "../types/game";
-import { existsInCache, getCachedImage } from "../stores/cacheStore";
+import type { game } from "../../types/game";
+import { existsInCache, getCachedImage } from "../../stores/cacheStore";
 import { readFile } from "@tauri-apps/plugin-fs";
-import { getGameAssets } from "../services/gameService";
-import { ThemeContext } from "../userContext";
+import { getGameAssets } from "../../services/gameService";
+import { ThemeContext } from "../../userContext";
 import "./LibraryCard.css";
 
 interface LibraryCardProps {
