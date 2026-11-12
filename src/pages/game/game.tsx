@@ -15,9 +15,9 @@ import axios from "axios";
 import "./game.css";
 import { useLibraryStore } from "../../stores/libraryStore";
 import { useAuthStore } from "../../stores/authStore";
-import VideoPlayer from "../../components/video_player";
+import VideoPlayer from "../../components/VideoPlayer/VideoPlayer";
 import { ThemeContext } from "../../userContext";
-import Achievements from "../../components/Achievements";
+import Achievements from "../../components/Achievements/Achievements";
 import { createPortal } from "react-dom";
 import {
   getGameAssets,

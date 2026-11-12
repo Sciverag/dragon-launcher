@@ -1,8 +1,8 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
-import { LibraryHeader } from "../../components/LibraryHeader";
+import { LibraryHeader } from "../../components/LibraryHeader/LibraryHeader";
 import "./library.css";
-import LibraryGames from "../../components/LibraryGames";
+import LibraryGames from "../../components/LibraryGames/LibraryGames";
 import { useLibraryStore } from "../../stores/libraryStore";
 import { useAuthStore } from "../../stores/authStore";
 import {
@@ -53,6 +53,7 @@ function Library() {
       (location.state as { fromHome?: boolean } | null)?.fromHome ?? false;
 
     if (isLibraryRoute && fromHome) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setShowRipples(true);
     }
   }, [isLibraryRoute, location.state]);
@@ -79,6 +80,7 @@ function Library() {
 
   useEffect(() => {
     if (!shouldReloadLibrary) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setLoading(false);
       return;
     }

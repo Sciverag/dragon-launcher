@@ -1,7 +1,7 @@
 import { useRef, useState, useEffect, useCallback } from "react";
 import Hls from "hls.js";
-import { useSettingsStore } from "../stores/settingsStore";
-import "./video_player.css";
+import { useSettingsStore } from "../../stores/settingsStore";
+import "./VideoPlayer.css";
 
 interface videoPlayerProps {
   videoUrl: string;
